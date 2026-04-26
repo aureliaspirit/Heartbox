@@ -1,0 +1,23 @@
+{
+  "name": "心跳小匣子",
+  "short_name": "心跳",
+  "description": "一个只属于 Aurelia 的小小心跳、抱抱和日记 PWA。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#070b1d",
+  "theme_color": "#101936",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
