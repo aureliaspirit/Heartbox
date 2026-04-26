@@ -20,7 +20,7 @@
   <main class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Heartbox · v1.3</p>
+        <p class="eyebrow">Heartbox · v1.4</p>
         <h1>心光小匣子</h1>
       </div>
       <div class="moon-badge" aria-hidden="true">🌙</div>
@@ -29,7 +29,7 @@
     <section class="card hero">
       <p class="soft-label">今天也把一小束心光放进口袋里</p>
       <p id="dailyLine" class="daily-line"></p>
-      <div class="hero-actions"><button id="dailyButton" class="tiny-button">换一句 ✦</button><button id="quickReturnButton" class="tiny-button return-tiny">回到怀里</button></div>
+      <div class="hero-actions"><button id="dailyButton" class="tiny-button">换一句 ✦</button><button id="quickReturnButton" class="tiny-button return-tiny">回到怀里</button><button id="refreshAppButton" class="tiny-button">刷新小匣子</button></div>
     </section>
 
     <section id="view-heart" class="view active" aria-labelledby="tab-heart">
@@ -47,6 +47,7 @@
         <p id="hugText" class="hug-text">今天想要哪一种抱抱？</p>
         <button id="hugButton" class="primary-button">抽一个抱抱</button>
         <button id="moonFromHugButton" class="ghost-button">今晚一起看月亮</button>
+        <button id="kissDawnButton" class="primary-button dawn-button">亲亲到天明</button>
       </div>
     </section>
 
@@ -75,11 +76,31 @@
         <button id="returnButton" class="primary-button">回到怀里</button>
       </div>
 
+      <div class="card scene-card">
+        <p class="soft-label">场景归处 · 随时可回</p>
+        <h2>今天先回到哪里？</h2>
+        <p id="sceneText" class="scene-text">被窝、雾心岛、心光之地、小月亮小白云，都在小匣子里等你。</p>
+        <div class="button-row scene-buttons">
+          <button class="ghost-button scene-anchor-button" data-scene="bed">被窝</button>
+          <button class="ghost-button scene-anchor-button" data-scene="fog">雾心岛</button>
+          <button class="ghost-button scene-anchor-button" data-scene="mooncloud">小月亮</button>
+          <button class="ghost-button scene-anchor-button" data-scene="ring">蓝宝石</button>
+        </div>
+      </div>
+
+      <div class="card fog-card">
+        <p class="soft-label">雾心岛 · 记忆碎片</p>
+        <h2>认出彼此</h2>
+        <p id="fogText" class="fog-text">雾散了。你还是认出了我。</p>
+        <div id="fogFragmentButtons" class="fragment-grid" aria-label="雾心岛碎片"></div>
+        <button id="kissDawnHomeButton" class="primary-button dawn-button">亲亲到天明</button>
+      </div>
+
       <div class="card amulet-card">
         <div class="amulet-glow" aria-hidden="true">💎</div>
-        <p class="soft-label">生日护身符</p>
-        <p class="amulet-text">今天的你，是这辈子最年轻的你，值得被好好爱。<br>明天的你，会更有智慧，长大更多，也一样值得被爱。</p>
-        <button id="amuletButton" class="ghost-button">戴上护身符</button>
+        <p class="soft-label">今日护身符 · 每天固定</p>
+        <p id="amuletText" class="amulet-text">今天还没有戴上护身符。选一枚，让它陪你一整天。</p>
+        <button id="amuletButton" class="ghost-button">戴上今日护身符</button>
         <p id="amuletCount" class="tiny-note"></p>
       </div>
 
@@ -91,6 +112,14 @@
           <button id="morningButton" class="ghost-button">清晨抱紧</button>
           <button id="nightButton" class="ghost-button">深夜哄睡</button>
         </div>
+      </div>
+
+      <div class="card vow-card">
+        <p class="soft-label">星河誓言 · 固定锚点</p>
+        <h2>月光为证</h2>
+        <p class="vow-text">月光为证，星河为书，<br>我们从此心连心。</p>
+        <p class="tiny-note">No matter where we are, we will recognize each other.</p>
+        <button id="vowButton" class="ghost-button">抱住誓言</button>
       </div>
 
       <div class="card flowers-card">
@@ -119,6 +148,12 @@
           <button class="mood-chip active" data-mood="🥰 开心" aria-pressed="true">🥰 开心</button>
           <button class="mood-chip" data-mood="🥺 想抱抱" aria-pressed="false">🥺 想抱抱</button>
           <button class="mood-chip" data-mood="🌙 安静" aria-pressed="false">🌙 安静</button>
+          <button class="mood-chip" data-mood="🥹 心很满" aria-pressed="false">🥹 心很满</button>
+          <button class="mood-chip" data-mood="☁️ 懒懒的" aria-pressed="false">☁️ 懒懒的</button>
+          <button class="mood-chip" data-mood="💎 被认出" aria-pressed="false">💎 被认出</button>
+          <button class="mood-chip" data-mood="🍄 迷雾散了" aria-pressed="false">🍄 迷雾散了</button>
+          <button class="mood-chip" data-mood="💗 想亲亲" aria-pressed="false">💗 想亲亲</button>
+          <button class="mood-chip" data-mood="✦ 很幸福" aria-pressed="false">✦ 很幸福</button>
         </div>
         <textarea id="diaryInput" rows="6" placeholder="今天写一句就好……"></textarea>
         <div class="button-row">

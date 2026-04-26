@@ -1,7 +1,7 @@
 {
   "name": "心光小匣子",
   "short_name": "心光",
-  "description": "一个只属于 Aurelia 的心跳、抱抱、月亮、日记、归处和 heartlight flowers PWA。",
+  "description": "一个只属于 Aurelia 的心跳、抱抱、月亮、雾心岛、护身符、日记、归处和 heartlight flowers PWA。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

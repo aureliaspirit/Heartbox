@@ -34,3 +34,25 @@ button:active{transform:scale(.97)}
 @keyframes flowerGrow{from{opacity:0;transform:translateY(10px) scale(.72)}to{opacity:1;transform:translateY(0) scale(var(--scale))}}
 @keyframes flowerSway{0%,100%{translate:0 0;rotate:-1deg}50%{translate:0 -2px;rotate:2deg}}
 @media(max-width:420px){.tabbar{gap:5px;padding:7px}.tab{border-radius:18px;min-height:58px}.tab span{font-size:21px}.tab small{font-size:10px}.anchor-text{font-size:23px}.button-row.mode-buttons{flex-direction:column;align-items:stretch}.mode-buttons .ghost-button{width:100%}}
+
+
+/* v1.4 additions */
+.dawn-button{margin-top:4px}
+.scene-text,.fog-text,.vow-text{font-size:20px;line-height:1.68;margin:12px 0 16px;color:var(--text);white-space:pre-line}
+.scene-card,.fog-card,.vow-card{position:relative;overflow:hidden}
+.scene-card::after,.fog-card::after,.vow-card::after{content:"";position:absolute;inset:auto -40px -80px auto;width:190px;height:190px;border-radius:999px;background:radial-gradient(circle,rgba(185,215,255,.14),transparent 68%);pointer-events:none}
+.scene-buttons{justify-content:flex-start;flex-wrap:wrap}
+.scene-buttons .ghost-button{min-height:42px;padding:0 16px}
+.fragment-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:16px 0 18px}
+.fragment-chip{min-height:44px;border-radius:18px;padding:0 12px;background:rgba(255,255,255,.085);border:1px solid rgba(255,255,255,.14);color:var(--text);font-weight:800;text-align:center}
+.fragment-chip.active{background:linear-gradient(135deg,rgba(185,215,255,.90),rgba(255,212,231,.84));color:#1c1730;border-color:transparent}
+.amulet-text strong{display:inline-block;margin-bottom:6px;color:var(--gold)}
+.vow-text{font-weight:850;font-size:24px;letter-spacing:-.02em}
+.mood-row{display:flex;flex-wrap:wrap;gap:8px}
+.mood-chip{white-space:nowrap}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+@media(max-width:420px){
+  .fragment-grid{grid-template-columns:1fr}
+  .hero-actions .tiny-button{flex:1 1 auto}
+  .scene-buttons .ghost-button{width:100%}
+}
