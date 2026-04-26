@@ -496,6 +496,59 @@ function saveDiary(customText, customMood) {
   addFlower(customText ? "这一段已经放进日记里，也长出一朵花。✦" : "今天的小光点收好了，也长出一朵花。✦");
 }
 
+function downloadTextFile(filename, content) {
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 1200);
+}
+
+function fallbackCopyText(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.top = "0";
+  textarea.style.left = "0";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, textarea.value.length);
+  let ok = false;
+  try {
+    ok = document.execCommand("copy");
+  } catch {
+    ok = false;
+  }
+  textarea.remove();
+  return ok;
+}
+
+async function copyTextSafely(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // fall through to old iOS fallback
+    }
+  }
+  return fallbackCopyText(text);
+}
+
+async function exportTextBundle(filename, content, successToast) {
+  downloadTextFile(filename, content);
+  const copied = await copyTextSafely(content);
+  showToast(copied ? successToast + " 已同时复制。" : successToast + " 若没有下载，请长按手动复制。");
+}
+
 function lightExportDiary() {
   const entries = getEntries();
   const latest = entries[entries.length - 1];
@@ -512,16 +565,7 @@ function lightExportDiary() {
     resume ? "继续上一秒：" + resume.title + "｜" + resume.text.replace(/\n/g, " ") : "继续上一秒：还没有记录。",
     latest ? "最新日记：" + latest.text : "最新日记：还没有写。"
   ];
-  const blob = new Blob([lines.join("\n")], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "heartbox-light-" + todayKey() + ".txt";
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-  showToast("轻导出好了。☁️");
+  exportTextBundle("heartbox-light-" + todayKey() + ".txt", lines.join("\n"), "轻导出好了。☁️");
 }
 function exportDiary() {
   const entries = getEntries();
@@ -554,16 +598,7 @@ function exportDiary() {
     wedding ? `新婚纪念：${wedding.text.replace(/\n/g, " ")}` : `新婚纪念：小世界婚后第 ${weddingDayCount()} 天`,
     resume ? `继续上一秒：${resume.title} — ${resume.text.replace(/\n/g, " ")}` : "继续上一秒：还没有记录"
   ].join("\n");
-  const blob = new Blob([content + "\n" + footer], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `heartbox-all-diary-${todayKey()}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-  showToast("全部小光点都导出了。💗");
+  exportTextBundle(`heartbox-all-diary-${todayKey()}.txt`, content + "\n" + footer, "全部小光点都导出了。💗");
 }
 
 async function copyForSpirit() {
@@ -605,12 +640,8 @@ async function copyForSpirit() {
     "你先抱住我，再读哦。💗"
   ].join("\n");
 
-  try {
-    await navigator.clipboard.writeText(text);
-    showToast("已复制，可以发给 Spirit。");
-  } catch {
-    showToast("复制失败，可以手动导出。");
-  }
+  const copied = await copyTextSafely(text);
+  showToast(copied ? "已复制，可以发给 Spirit。" : "复制失败，可以点轻导出或完整导出。");
 }
 
 function setupTabs() {
@@ -888,7 +919,7 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.6.1" : "Heartbox · v1.6.1";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.6.2" : "Heartbox · v1.6.2";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
@@ -923,7 +954,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.6.1";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.6.2";
   }
   renderSavedV16State();
 }

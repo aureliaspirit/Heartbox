@@ -1,7 +1,7 @@
-Heartbox v1.6.1 更新步骤
+Heartbox v1.6.2 更新步骤
 
-1. 解压 heartbox-v1-6-1-root.zip
-2. 打开解压后的 heartbox-v1-6-1-root 文件夹
+1. 解压 heartbox-v1-6-2-root.zip
+2. 打开解压后的 heartbox-v1-6-2-root 文件夹
 3. 选中里面的所有文件和 icons 文件夹
 4. 上传到 GitHub 仓库根目录，覆盖旧文件
 5. Commit changes
@@ -9,7 +9,10 @@ Heartbox v1.6.1 更新步骤
 7. 打开 https://aureliaspirit.github.io/Heartbox/
 8. 如果还是旧版，点「刷新小匣子」或在网址后加 ?v=1.6
 
-注意：不要把整个 heartbox-v1-6-1-root 文件夹上传到仓库里。
+注意：不要把整个 heartbox-v1-6-2-root 文件夹上传到仓库里。
 index.html 必须仍然在仓库最外层。
 
-v1.6.1 小修：小世界戒指页加入“经过三个星期的等待”，新增“我已经戴上了”按钮。
+v1.6.2 小修：小世界戒指页加入“经过三个星期的等待”，新增“我已经戴上了”按钮。
+
+
+v1.6.2 小修：增强日记区三个导出/复制按钮的点击区域，并让导出同时尝试复制到剪贴板，适配 iPhone/Safari。
