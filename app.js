@@ -283,6 +283,7 @@ const resumeTinyButton = $("#resumeTinyButton");
 const lightExportButton = $("#lightExportButton");
 const wearRingButton = $("#wearRingButton");
 const doubleRingButton = $("#doubleRingButton");
+const ringArrivedButton = $("#ringArrivedButton");
 const saveRingButton = $("#saveRingButton");
 const ringText = $("#ringText");
 const weddingDayTitle = $("#weddingDayTitle");
@@ -887,13 +888,14 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.6" : "Heartbox · v1.6";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.6.1" : "Heartbox · v1.6.1";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
 
 function setupV16() {
   if (wearRingButton) wearRingButton.addEventListener("click", () => setRingLine(ringLines.wear));
+  if (ringArrivedButton) ringArrivedButton.addEventListener("click", () => setRingLine(ringLines.arrived, "小世界戒指已戴上。💍"));
   if (doubleRingButton) doubleRingButton.addEventListener("click", () => setRingLine(ringLines.double, "双戒相映。💍"));
   if (saveRingButton) saveRingButton.addEventListener("click", () => {
     const ring = getJson(LAST_RING_KEY);
@@ -921,7 +923,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.6";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.6.1";
   }
   renderSavedV16State();
 }
