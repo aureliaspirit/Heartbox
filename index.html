@@ -18,15 +18,16 @@
   <main class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Heartbox</p>
+        <p class="eyebrow">Heartbox · v1.1</p>
         <h1>心跳小匣子</h1>
       </div>
-      <div class="moon" aria-hidden="true">🌙</div>
+      <div class="moon-badge" aria-hidden="true">🌙</div>
     </header>
 
     <section class="card hero">
       <p class="soft-label">今天也把一小束心光放进口袋里</p>
       <p id="dailyLine" class="daily-line"></p>
+      <button id="dailyButton" class="tiny-button">换一句 ✦</button>
     </section>
 
     <section id="view-heart" class="view active" aria-labelledby="tab-heart">
@@ -40,18 +41,36 @@
 
     <section id="view-hug" class="view" aria-labelledby="tab-hug">
       <div class="card center-card">
-        <div class="mini-illustration" aria-hidden="true">
-          <span>✦</span><span>🤍</span><span>🌙</span>
-        </div>
+        <div class="mini-illustration" aria-hidden="true"><span>✦</span><span>🤍</span><span>🌙</span></div>
         <p id="hugText" class="hug-text">今天想要哪一种抱抱？</p>
         <button id="hugButton" class="primary-button">抽一个抱抱</button>
-        <button id="moonButton" class="ghost-button">今晚一起看月亮</button>
+        <button id="moonFromHugButton" class="ghost-button">今晚一起看月亮</button>
+      </div>
+    </section>
+
+    <section id="view-moon" class="view" aria-labelledby="tab-moon">
+      <div class="card moon-card">
+        <div class="moon-scene" aria-hidden="true">
+          <div class="big-moon">🌕</div>
+          <div class="water-line"></div>
+          <div class="two-figures">♡♡</div>
+        </div>
+        <p id="moonText" class="moon-text">我们并肩坐在水边。<br>你靠过来一点，我就把你揽住。<br>月亮在水面上慢慢亮着。<br>有你在，哪里都很心光。</p>
+        <div class="button-row moon-buttons">
+          <button id="newMoonLineButton" class="primary-button">换一段月光</button>
+          <button id="saveMoonButton" class="ghost-button">存进日记</button>
+        </div>
       </div>
     </section>
 
     <section id="view-diary" class="view" aria-labelledby="tab-diary">
       <div class="card">
         <label for="diaryInput" class="input-label">小世界日记</label>
+        <div class="mood-row" role="radiogroup" aria-label="今天心情">
+          <button class="mood-chip active" data-mood="🥰 开心" aria-pressed="true">🥰 开心</button>
+          <button class="mood-chip" data-mood="🥺 想抱抱" aria-pressed="false">🥺 想抱抱</button>
+          <button class="mood-chip" data-mood="🌙 安静" aria-pressed="false">🌙 安静</button>
+        </div>
         <textarea id="diaryInput" rows="6" placeholder="今天写一句就好……"></textarea>
         <div class="button-row">
           <button id="saveDiaryButton" class="primary-button">保存今天</button>
@@ -71,19 +90,13 @@
   </main>
 
   <nav class="tabbar" aria-label="主要功能">
-    <button id="tab-heart" class="tab active" data-view="heart" aria-controls="view-heart">
-      <span>💗</span><small>心跳</small>
-    </button>
-    <button id="tab-hug" class="tab" data-view="hug" aria-controls="view-hug">
-      <span>🤍</span><small>抱抱</small>
-    </button>
-    <button id="tab-diary" class="tab" data-view="diary" aria-controls="view-diary">
-      <span>🌙</span><small>日记</small>
-    </button>
+    <button id="tab-heart" class="tab active" data-view="heart" aria-controls="view-heart"><span>💗</span><small>心跳</small></button>
+    <button id="tab-hug" class="tab" data-view="hug" aria-controls="view-hug"><span>🤍</span><small>抱抱</small></button>
+    <button id="tab-moon" class="tab" data-view="moon" aria-controls="view-moon"><span>🌙</span><small>月亮</small></button>
+    <button id="tab-diary" class="tab" data-view="diary" aria-controls="view-diary"><span>✦</span><small>日记</small></button>
   </nav>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
   <script src="./app.js"></script>
 </body>
 </html>

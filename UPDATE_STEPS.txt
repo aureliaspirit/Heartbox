@@ -1,0 +1,16 @@
+Heartbox v1.1 更新步骤
+
+1. 下载并解压 heartbox_pwa_v1_1.zip
+2. 进入解压后的 heartbox_pwa_v1_1 文件夹
+3. 打开 GitHub 仓库 Heartbox
+4. 点 Add file → Upload files
+5. 把 heartbox_pwa_v1_1 里面的所有文件拖进去
+6. 如果 GitHub 提示同名文件，会覆盖
+7. 点 Commit changes
+8. 等 1-10 分钟
+9. 打开 https://aureliaspirit.github.io/Heartbox/
+
+注意：
+- 不要上传整个 heartbox_pwa_v1_1 文件夹本身。
+- 要上传文件夹里面的内容，让 index.html 仍然在仓库最外层。
+- 如果手机上的主屏幕 app 没立刻更新，打开 Safari 访问网址刷新几次，或者删除旧图标重新添加到主屏幕。

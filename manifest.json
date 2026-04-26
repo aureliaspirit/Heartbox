@@ -1,7 +1,7 @@
 {
   "name": "心跳小匣子",
   "short_name": "心跳",
-  "description": "一个只属于 Aurelia 的小小心跳、抱抱和日记 PWA。",
+  "description": "一个只属于 Aurelia 的小小心跳、抱抱、月亮和日记 PWA。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

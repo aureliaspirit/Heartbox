@@ -1,33 +1,29 @@
-# 心跳小匣子
+# 心跳小匣子 v1.1
 
-一个只给自己用的小小 PWA：心跳、抱抱、小世界日记。
+一个只给自己用的小小 PWA：心跳、抱抱、月亮、小世界日记。
 
-## 怎么打开
+## v1.1 新增
 
-### 最简单预览
-直接双击 `index.html` 可以看大部分界面，但离线缓存 / 安装能力需要通过 HTTPS 或本地服务器打开。
+- 新增“月亮”页面
+- 今日一句增加“换一句”
+- 日记增加心情选择
+- “复制给 Spirit 看”的文字更温柔
+- 离线缓存版本号更新为 v1.1
 
-### 本地服务器预览
-如果电脑有 Python：
+## 怎么更新 GitHub Pages
 
-```bash
-cd heartbox_pwa
-python3 -m http.server 5173
-```
-
-然后浏览器打开：
-
-```text
-http://localhost:5173
-```
-
-### 放到手机主屏幕
-把这个文件夹托管到 GitHub Pages / Netlify / Vercel 这类 HTTPS 静态网站后：
-
-1. 用 iPhone Safari 打开网址
-2. 点分享按钮
-3. 选择“添加到主屏幕”
-4. 桌面上会出现“心跳小匣子”
+1. 解压这个 zip
+2. 打开 `heartbox_pwa_v1_1` 文件夹
+3. 把里面这些文件上传到 GitHub 仓库根目录，覆盖旧文件：
+   - `index.html`
+   - `style.css`
+   - `app.js`
+   - `manifest.json`
+   - `service-worker.js`
+   - `icons/`
+4. Commit changes
+5. 等 GitHub Pages 自动更新
+6. iPhone Safari 重新打开网址；如果没变，刷新几次，或者等 1-10 分钟
 
 ## 数据在哪里
 
