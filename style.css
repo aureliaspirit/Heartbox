@@ -78,3 +78,16 @@ button:active{transform:scale(.97)}
   .together-buttons .primary-button,.together-buttons .ghost-button,.sequel-buttons .primary-button,.sequel-buttons .ghost-button,.cinema-buttons .primary-button,.cinema-buttons .ghost-button{width:100%}
   .together-text,.sequel-text,.cinema-text,.earned-text{font-size:19px}
 }
+
+/* v1.6 additions: 戒指 · 新婚纪念 · 继续上一秒 · 摸鱼模式 */
+.ring-card,.wedding-card,.resume-card,.work-card{position:relative;overflow:hidden}
+.ring-card::before,.wedding-card::before{content:"";position:absolute;inset:-80px -70px auto auto;width:220px;height:220px;border-radius:999px;background:radial-gradient(circle,rgba(185,215,255,.22),transparent 68%);pointer-events:none}
+.resume-card::after,.work-card::after{content:"";position:absolute;inset:auto auto -90px -75px;width:230px;height:230px;border-radius:999px;background:radial-gradient(circle,rgba(255,212,231,.14),transparent 70%);pointer-events:none}
+.ring-visual{height:86px;margin:14px 0 12px;border-radius:28px;background:linear-gradient(135deg,rgba(185,215,255,.12),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;gap:12px;box-shadow:inset 0 0 34px rgba(185,215,255,.08)}
+.ring-visual span{display:block;border-radius:999px;background:radial-gradient(circle at 35% 28%,#fff,rgba(185,215,255,.95) 20%,rgba(70,119,205,.95) 62%,rgba(19,35,90,.95));box-shadow:0 0 18px rgba(185,215,255,.45),0 0 34px rgba(255,212,231,.15)}
+.ring-visual span:nth-child(1),.ring-visual span:nth-child(3){width:18px;height:18px;opacity:.95}.ring-visual span:nth-child(2){width:26px;height:26px}
+.ring-text,.wedding-text,.resume-text,.work-text{font-size:20px;line-height:1.72;margin:12px 0 16px;color:var(--text);white-space:pre-line}.resume-text strong{color:var(--gold)}
+.ring-buttons,.wedding-buttons,.work-buttons{justify-content:flex-start;flex-wrap:wrap}.ring-buttons .primary-button,.wedding-buttons .primary-button{background:linear-gradient(135deg,var(--blue),var(--pink));color:#171b34}.work-card .ghost-button{color:var(--gold)}
+.ring-text.fade-in,.wedding-text.fade-in,.resume-text.fade-in,.work-text.fade-in{animation:textFloat .34s ease both}
+body.work-mode{background:#f7f3ea;color:#2d2b27}body.work-mode .stars,body.work-mode .hero,body.work-mode .moon-badge,body.work-mode .tabbar,body.work-mode .view .card:not(.work-card){display:none!important}body.work-mode .app-shell{max-width:680px;padding-bottom:34px}body.work-mode .topbar{color:#2d2b27}body.work-mode .eyebrow{color:rgba(45,43,39,.58)}body.work-mode .work-card{background:#fffdf7;color:#2d2b27;border-color:rgba(45,43,39,.10);box-shadow:0 18px 50px rgba(86,74,52,.14)}body.work-mode .work-card .soft-label,body.work-mode .work-card .tiny-note{color:rgba(45,43,39,.55)}body.work-mode .work-text{color:#2d2b27}body.work-mode .ghost-button{background:rgba(45,43,39,.06);border-color:rgba(45,43,39,.12);color:#2d2b27}
+@media(max-width:420px){.ring-buttons,.wedding-buttons,.work-buttons{flex-direction:column;align-items:stretch}.ring-buttons .primary-button,.ring-buttons .ghost-button,.wedding-buttons .primary-button,.wedding-buttons .ghost-button,.work-buttons .ghost-button{width:100%}.ring-text,.wedding-text,.resume-text,.work-text{font-size:19px}}

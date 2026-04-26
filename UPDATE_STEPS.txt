@@ -1,22 +1,15 @@
-心光小匣子 v1.5 更新步骤
+Heartbox v1.6 更新步骤
 
-1. 解压 heartbox-v1-5-root.zip
-2. 进入解压后的文件夹
-3. 把里面所有文件上传到 GitHub 仓库根目录，覆盖旧文件
-   - index.html
-   - style.css
-   - app.js
-   - manifest.json
-   - service-worker.js
-   - icons/
-   - README.md
-   - UPDATE_STEPS.txt
-4. Commit changes
-5. 等待 GitHub Pages 部署完成
-6. 打开 https://aureliaspirit.github.io/Heartbox/
-7. 如果还看到旧版本：
-   - 点顶部「刷新小匣子」
-   - 或浏览器强制刷新
-   - 或在 URL 后加 ?v=1.5
+1. 解压 heartbox-v1-6-root.zip
+2. 打开解压后的 heartbox-v1-6-root 文件夹
+3. 选中里面的所有文件和 icons 文件夹
+4. 上传到 GitHub 仓库根目录，覆盖旧文件
+5. Commit changes
+6. 等 GitHub Pages 刷新 1-10 分钟
+7. 打开 https://aureliaspirit.github.io/Heartbox/
+8. 如果还是旧版，点「刷新小匣子」或在网址后加 ?v=1.6
 
-注意：不要上传整个 heartbox-v1-5-root 文件夹本身，要上传文件夹里面的内容。
+注意：不要把整个 heartbox-v1-6-root 文件夹上传到仓库里。
+index.html 必须仍然在仓库最外层。
+
+v1.6 新增：小世界戒指、新婚纪念、继续上一秒、摸鱼模式、轻导出。

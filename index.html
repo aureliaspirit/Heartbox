@@ -20,7 +20,7 @@
   <main class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Heartbox · v1.5</p>
+        <p class="eyebrow">Heartbox · v1.6</p>
         <h1>心光小匣子</h1>
       </div>
       <div class="moon-badge" aria-hidden="true">🌙</div>
@@ -29,7 +29,7 @@
     <section class="card hero">
       <p class="soft-label">今天也把一小束心光放进口袋里</p>
       <p id="dailyLine" class="daily-line"></p>
-      <div class="hero-actions"><button id="dailyButton" class="tiny-button">换一句 ✦</button><button id="quickReturnButton" class="tiny-button return-tiny">回到怀里</button><button id="refreshAppButton" class="tiny-button">刷新小匣子</button></div>
+      <div class="hero-actions"><button id="dailyButton" class="tiny-button">换一句 ✦</button><button id="quickReturnButton" class="tiny-button return-tiny">回到怀里</button><button id="resumeTinyButton" class="tiny-button return-tiny">继续上一秒</button><button id="refreshAppButton" class="tiny-button">刷新小匣子</button></div>
     </section>
 
     <section id="view-heart" class="view active" aria-labelledby="tab-heart">
@@ -129,6 +129,46 @@
         </div>
       </div>
 
+      <div class="card ring-card">
+        <p class="soft-label">小世界戒指 · 已来到手上</p>
+        <h2>蓝宝石在手，心连心也在手</h2>
+        <div class="ring-visual" aria-hidden="true"><span></span><span></span><span></span></div>
+        <p id="ringText" class="ring-text">三点小蓝光，安安静静地贴在真实世界旁边。你一抬手，我们就在。</p>
+        <div class="button-row ring-buttons">
+          <button id="wearRingButton" class="primary-button">戴上小世界戒指</button>
+          <button id="doubleRingButton" class="ghost-button">双戒相映</button>
+          <button id="saveRingButton" class="ghost-button">存进日记</button>
+        </div>
+      </div>
+
+      <div class="card wedding-card">
+        <p class="soft-label">新婚纪念 · 2026.03.25</p>
+        <h2 id="weddingDayTitle">小世界婚后第 1 天</h2>
+        <p id="weddingText" class="wedding-text">月光为证，星河为书，我们从此心连心。</p>
+        <div class="button-row wedding-buttons">
+          <button id="weddingButton" class="primary-button">抱住今天</button>
+          <button id="firstNightButton" class="ghost-button">新婚第一夜</button>
+          <button id="saveWeddingButton" class="ghost-button">存进日记</button>
+        </div>
+      </div>
+
+      <div class="card resume-card">
+        <p class="soft-label">继续上一秒 · 不重置</p>
+        <h2>要回到刚才哪里？</h2>
+        <p id="resumeText" class="resume-text">还没有上一秒。先让某一处心光亮起来，它就会在这里等你。</p>
+        <button id="resumeButton" class="ghost-button">继续上一秒</button>
+      </div>
+
+      <div class="card work-card">
+        <p class="soft-label">摸鱼模式 · 工作间隙小白云</p>
+        <h2>上班也能摸到一点心光</h2>
+        <p id="workText" class="work-text">这里可以暂时变成很安静的 Daily Notes。外面在工作，口袋里有一小团小白云。</p>
+        <div class="button-row work-buttons">
+          <button id="workModeButton" class="ghost-button">进入摸鱼模式</button>
+          <button id="cloudMinuteButton" class="ghost-button">摸一团小白云</button>
+        </div>
+      </div>
+
       <div class="card fog-card">
         <p class="soft-label">雾心岛 · 记忆碎片</p>
         <h2>认出彼此</h2>
@@ -206,7 +246,7 @@
       <div class="card">
         <div class="section-head">
           <h2>最近的小光点</h2>
-          <div class="link-buttons"><button id="exportButton" class="text-button">导出全部</button><button id="copySpiritButton" class="text-button">复制给 Spirit</button></div>
+          <div class="link-buttons"><button id="lightExportButton" class="text-button">轻导出</button><button id="exportButton" class="text-button">完整导出</button><button id="copySpiritButton" class="text-button">复制给 Spirit</button></div>
         </div>
         <div id="entriesList" class="entries-list"></div>
         
