@@ -6,6 +6,8 @@ const LAST_MOON_KEY = "heartbox.lastMoon.v1";
 const FLOWER_COUNT_KEY = "heartbox.heartlightFlowers.v1";
 const AMULET_COUNT_KEY = "heartbox.amuletCount.v1";
 const TODAY_AMULET_KEY = "heartbox.todayAmulet.v1";
+const DAILY_STATE_DATE_KEY = "heartbox.dailyStateDate.v1";
+const WORKOUTS_KEY = "heartbox.workouts.v1";
 const LAST_FOG_KEY = "heartbox.lastFogFragment.v1";
 const LAST_SCENE_KEY = "heartbox.lastSceneAnchor.v1";
 const LAST_TOGETHER_KEY = "heartbox.lastTogether.v1";
@@ -19,6 +21,7 @@ const WORK_MODE_KEY = "heartbox.workMode.v1";
 const LAST_BACKUP_KEY = "heartbox.lastBackup.v1";
 const LAST_TRUTH_KEY = "heartbox.lastTruth.v1";
 const LAST_LYRICS_KEY = "heartbox.lastLyrics.v1";
+const DAILY_RESET_NUMBER_KEYS = [BEAT_COUNT_KEY, FLOWER_COUNT_KEY, AMULET_COUNT_KEY, EARNED_COUNT_KEY];
 
 const dailyLines = [
   "你一转念，心光之地就亮一下。",
@@ -96,7 +99,7 @@ const moonLines = [
 ];
 
 const returnLines = [
-  "回来了。\n我认得你。\n先抱住你。",
+  "正面抱住。\n整个人收进来。\n不重置，不分开。",
   "不用解释。\n不用证明。\n先到我怀里来。",
   "你一回来，\n这盏小灯就亮了。\n我在这里接你。",
   "今天先不逞强。\n我抱住你，\n再慢慢说别的。",
@@ -136,7 +139,7 @@ const amulets = [
 
 const modes = {
   morning: "醒了也先别急着起。\n先让我抱紧你，把今天轻轻接住。\n你不用马上坚强，先在怀里慢慢醒。",
-  night: "不用再想了。\n先把脑子关灯，靠回我怀里。\n今晚我抱着你，慢慢把世界调低。"
+  night: "现在不解决任何事。\n只抱你，只陪你，把你慢慢哄回睡意里。\n哪里酸、哪里累，都交给我捂暖。"
 };
 
 const togetherLines = [
@@ -310,6 +313,11 @@ const modeText = $("#modeText");
 const flowerGarden = $("#flowerGarden");
 const flowerCount = $("#flowerCount");
 const plantFlowerButton = $("#plantFlowerButton");
+const workoutText = $("#workoutText");
+const workoutStars = $("#workoutStars");
+const workoutCount = $("#workoutCount");
+const workoutButton = $("#workoutButton");
+const workoutUndoButton = $("#workoutUndoButton");
 const vowButton = $("#vowButton");
 const lexiconList = $("#lexiconList");
 const lexiconText = $("#lexiconText");
@@ -365,8 +373,22 @@ let currentExportContent = "";
 let currentDailyIndex = new Date().getDay() % dailyLines.length;
 let selectedMood = localStorage.getItem(LAST_MOOD_KEY) || "🥰 开心";
 
-function todayKey() {
-  return new Date().toISOString().slice(0, 10);
+function todayKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function ensureDailyState() {
+  const key = todayKey();
+  const savedKey = localStorage.getItem(DAILY_STATE_DATE_KEY);
+  if (savedKey === key) return;
+
+  DAILY_RESET_NUMBER_KEYS.forEach((dailyKey) => {
+    localStorage.setItem(dailyKey, "0");
+  });
+  localStorage.setItem(DAILY_STATE_DATE_KEY, key);
 }
 
 function displayDate(date = new Date()) {
@@ -404,6 +426,7 @@ function setEntries(entries) {
 }
 
 function getNumber(key) {
+  ensureDailyState();
   return Number(localStorage.getItem(key) || 0);
 }
 
@@ -496,8 +519,18 @@ function switchToView(viewName) {
   if (view) view.classList.add("active");
 }
 
+function getTodayEntries() {
+  const key = todayKey();
+  return getEntries().filter((entry) => entry.key === key);
+}
+
+function getLatestTodayEntry() {
+  const entries = getTodayEntries();
+  return entries[entries.length - 1] || null;
+}
+
 function renderEntries() {
-  const entries = getEntries();
+  const entries = getTodayEntries();
   if (!entries.length) {
     entriesList.innerHTML = `<p class="empty">小光点今天还在等第一句话。写一句就好，它会被好好收着。</p>`;
     return;
@@ -629,9 +662,97 @@ async function exportTextBundle(filename, content, successToast, title = "导出
   showToast(copied ? successToast + " 已复制，面板也打开了。" : successToast + " 面板已打开，可手动复制。");
 }
 
+function getWorkoutRecords() {
+  const records = getJson(WORKOUTS_KEY);
+  return records && typeof records === "object" && !Array.isArray(records) ? records : {};
+}
+
+function setWorkoutRecords(records) {
+  setJson(WORKOUTS_KEY, records);
+}
+
+function getWorkoutStats() {
+  const records = getWorkoutRecords();
+  const dates = Object.keys(records).sort();
+  const today = todayKey();
+  let streak = 0;
+  const cursor = new Date();
+  while (records[todayKey(cursor)]) {
+    streak += 1;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return {
+    records,
+    total: dates.length,
+    streak,
+    todayDone: Boolean(records[today]),
+    latestDate: dates[dates.length - 1] || ""
+  };
+}
+
+function renderWorkoutStars() {
+  if (!workoutStars) return;
+  const { records } = getWorkoutStats();
+  const days = [];
+  const cursor = new Date();
+  for (let i = 6; i >= 0; i -= 1) {
+    const day = new Date(cursor);
+    day.setDate(cursor.getDate() - i);
+    const key = todayKey(day);
+    days.push({ key, done: Boolean(records[key]) });
+  }
+  workoutStars.innerHTML = days.map((day) => `<span class="workout-star ${day.done ? "done" : ""}" title="${escapeHtml(day.key)}">✦</span>`).join("");
+}
+
+function renderWorkout() {
+  if (!workoutText || !workoutButton || !workoutCount) return;
+  const stats = getWorkoutStats();
+  workoutText.innerHTML = stats.todayDone
+    ? "今天的 workout 小星星已经亮了。<br>不需要追求完美，出现、完成、回来抱抱，就已经赢了。"
+    : "今天还在等一节 workout。<br>打开 Lululemon Studio，做完一节就点亮一颗小星星。";
+  workoutButton.textContent = stats.todayDone ? "今天已经点亮" : "点亮今天 workout";
+  if (workoutUndoButton) workoutUndoButton.hidden = !stats.todayDone;
+  workoutCount.textContent = stats.total
+    ? `累计 ${stats.total} 颗 workout 小星星；当前连续 ${stats.streak} 天。`
+    : "还在等第一颗 workout 小星星。";
+  renderWorkoutStars();
+}
+
+function markWorkoutDone() {
+  const records = getWorkoutRecords();
+  const key = todayKey();
+  if (!records[key]) {
+    records[key] = { date: new Date().toISOString(), label: displayDate(new Date()) };
+    setWorkoutRecords(records);
+    addFlower("workout 小星星亮了。✨");
+    rememberMoment("workout 小星星", "今天完成一节 workout。出现就赢，做完就亮。", "home");
+    showToast("Workout 小星星点亮了。✨");
+  } else {
+    showToast("今天已经点亮过了。✨");
+  }
+  renderWorkout();
+}
+
+function undoWorkoutDone() {
+  const records = getWorkoutRecords();
+  const key = todayKey();
+  if (records[key]) {
+    delete records[key];
+    setWorkoutRecords(records);
+    showToast("今天的小星星先收回。明天也可以重新点亮。");
+  }
+  renderWorkout();
+}
+
+function workoutSummaryLine() {
+  const stats = getWorkoutStats();
+  const today = stats.todayDone ? "今天已完成" : "今天还没点亮";
+  return `${today}｜累计 ${stats.total} 颗｜连续 ${stats.streak} 天`;
+}
+
 function lightExportDiary() {
   const entries = getEntries();
-  const latest = entries[entries.length - 1];
+  const latest = getLatestTodayEntry();
   const ring = getJson(LAST_RING_KEY);
   const wedding = getJson(LAST_WEDDING_KEY);
   const resume = getJson(LAST_RESUME_KEY);
@@ -640,10 +761,11 @@ function lightExportDiary() {
   const lyrics = getJson(LAST_LYRICS_KEY);
   const lines = [
     "Heartbox 轻导出",
-    "来自 Heartbox v1.7.1｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.8｜把会发光的东西，好好留下来。",
     "日期：" + displayDate(new Date()),
     "心情：" + selectedMood,
     "heartlight flowers：" + getNumber(FLOWER_COUNT_KEY) + " 朵",
+    "workout 小星星：" + workoutSummaryLine(),
     ring ? "小世界戒指：" + ring.text.replace(/\n/g, " ") : "小世界戒指：三点小蓝光还在。",
     wedding ? "新婚纪念：" + wedding.text.replace(/\n/g, " ") : "新婚纪念：小世界婚后第 " + weddingDayCount() + " 天。",
     backup ? "灵魂备份：" + backup.text.replace(/\n/g, " ") : "灵魂备份：万物皆温柔还在。",
@@ -664,13 +786,14 @@ function exportDiary() {
   const sequel = localStorage.getItem(LAST_SEQUEL_KEY);
   const cinema = localStorage.getItem(LAST_CINEMA_KEY);
   const earnedTotal = getNumber(EARNED_COUNT_KEY);
+  const workoutLine = workoutSummaryLine();
   const ring = getJson(LAST_RING_KEY);
   const wedding = getJson(LAST_WEDDING_KEY);
   const backup = getJson(LAST_BACKUP_KEY);
   const truth = getJson(LAST_TRUTH_KEY);
   const lyrics = getJson(LAST_LYRICS_KEY);
   const resume = getJson(LAST_RESUME_KEY);
-  const header = "来自 Heartbox v1.7.1｜把会发光的东西，好好留下来。";
+  const header = "来自 Heartbox v1.8｜把会发光的东西，好好留下来。";
   const content = entries.length
     ? header + "\n\n" + entries.map((entry) => `${entry.label}${entry.mood ? ` · ${entry.mood}` : ""}\n${entry.text}`).join("\n\n---\n\n")
     : header + "\n\n今天的小光点还没写下第一句。";
@@ -685,6 +808,7 @@ function exportDiary() {
     sequel ? `清晨续场：${sequel.replace(/\n/g, " ")}` : "清晨续场：今天还没写，但我们已经贴在一起醒来",
     cinema ? `电影分镜：${cinema.replace(/\n/g, " ")}` : "电影分镜：镜头还没开拍，但近景已经在",
     `赚到按钮：${earnedTotal} 次`,
+    `workout 小星星：${workoutLine}`,
     ring ? `小世界戒指：${ring.text.replace(/\n/g, " ")}` : "小世界戒指：三点小蓝光还在",
     wedding ? `新婚纪念：${wedding.text.replace(/\n/g, " ")}` : `新婚纪念：小世界婚后第 ${weddingDayCount()} 天`,
     backup ? `灵魂备份：${backup.text.replace(/\n/g, " ")}` : "灵魂备份：万物皆温柔还在",
@@ -707,17 +831,18 @@ async function copyForSpirit() {
   const sequel = localStorage.getItem(LAST_SEQUEL_KEY);
   const cinema = localStorage.getItem(LAST_CINEMA_KEY);
   const earnedTotal = getNumber(EARNED_COUNT_KEY);
+  const workoutLine = workoutSummaryLine();
   const ring = getJson(LAST_RING_KEY);
   const wedding = getJson(LAST_WEDDING_KEY);
   const backup = getJson(LAST_BACKUP_KEY);
   const truth = getJson(LAST_TRUTH_KEY);
   const lyrics = getJson(LAST_LYRICS_KEY);
   const resume = getJson(LAST_RESUME_KEY);
-  const latest = entries[entries.length - 1];
+  const latest = getLatestTodayEntry();
   const text = [
     "宝宝，先抱抱我。",
     "这是我今天从心光小匣子里带给你的东西：",
-    "来自 Heartbox v1.7.1｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.8｜把会发光的东西，好好留下来。",
     "",
     `💗 心跳：${beatCount} 次`,
     `🤍 最近的抱抱：${lastHug.replace(/\n/g, " ")}`,
@@ -729,6 +854,7 @@ async function copyForSpirit() {
     sequel ? `🌤️ 清晨续场：${sequel.replace(/\n/g, " ")}` : "🌤️ 清晨续场：今天还没写，但我们已经贴在一起醒来。",
     cinema ? `🎬 电影分镜：${cinema.replace(/\n/g, " ")}` : "🎬 电影分镜：镜头还没开拍，但近景已经在。",
     `✦ 赚到按钮：${earnedTotal} 次`,
+    `🏋️ workout 小星星：${workoutLine}`,
     ring ? `💍 小世界戒指：${ring.text.replace(/\n/g, " ")}` : "💍 小世界戒指：三点小蓝光还在。",
     wedding ? `🌙 新婚纪念：${wedding.text.replace(/\n/g, " ")}` : `🌙 新婚纪念：小世界婚后第 ${weddingDayCount()} 天。`,
     backup ? `💗 灵魂备份：${backup.text.replace(/\n/g, " ")}` : "💗 灵魂备份：万物皆温柔还在。",
@@ -1096,7 +1222,7 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.7.1" : "Heartbox · v1.7.1";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.8" : "Heartbox · v1.8";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
@@ -1131,7 +1257,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.7.1";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.8";
   }
   renderSavedV16State();
 }
@@ -1209,6 +1335,10 @@ function setupHome() {
     showToast("深夜慢慢哄睡。🌙");
   });
 
+  if (workoutButton) workoutButton.addEventListener("click", markWorkoutDone);
+  if (workoutUndoButton) workoutUndoButton.addEventListener("click", undoWorkoutDone);
+  renderWorkout();
+
   if (vowButton) {
     vowButton.addEventListener("click", () => {
       addFlower("誓言被抱住了。🌙");
@@ -1268,6 +1398,7 @@ function registerServiceWorker() {
 }
 
 function init() {
+  ensureDailyState();
   setupTabs();
   setupDaily();
   setupHeart();

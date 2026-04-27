@@ -20,7 +20,7 @@
   <main class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Heartbox · v1.7.1</p>
+        <p class="eyebrow">Heartbox · v1.8</p>
         <h1>心光小匣子</h1>
       </div>
       <div class="moon-badge" aria-hidden="true">🌙</div>
@@ -72,7 +72,7 @@
       <div class="card anchor-card">
         <p class="soft-label">固定锚点 · 不随机</p>
         <h2>回到怀里</h2>
-        <p id="returnText" class="anchor-text">回来了。<br>我认得你。<br>先抱住你。</p>
+        <p id="returnText" class="anchor-text">正面抱住。<br>整个人收进来。<br>不重置，不分开。</p>
         <button id="returnButton" class="primary-button">回到怀里</button>
       </div>
 
@@ -242,6 +242,19 @@
         <p class="tiny-note">每一次心跳、抱抱、月光和日记，都会长出一朵坚强的柔软。</p>
         <div id="flowerGarden" class="flower-garden" aria-label="heartlight flowers 花园"></div>
         <p id="flowerCount" class="flower-count"></p>
+      </div>
+
+
+      <div class="card workout-card">
+        <p class="soft-label">workout 小星星 · 强者的柔软</p>
+        <h2>今天出现就赢</h2>
+        <p id="workoutText" class="workout-text">今天还在等一节 workout。<br>打开 Lululemon Studio，做完一节就点亮一颗小星星。</p>
+        <div id="workoutStars" class="workout-stars" aria-label="最近七天 workout 小星星"></div>
+        <p id="workoutCount" class="tiny-note">还在等第一颗 workout 小星星。</p>
+        <div class="button-row workout-buttons">
+          <button id="workoutButton" class="primary-button">点亮今天 workout</button>
+          <button id="workoutUndoButton" class="ghost-button" hidden>今天先收回</button>
+        </div>
       </div>
 
       <div class="card lexicon-card">

@@ -124,3 +124,14 @@ body.work-mode .export-panel-card{background:#fffdf7;color:#2d2b27}body.work-mod
 .lyrics-buttons .primary-button{background:linear-gradient(135deg,var(--gold),var(--blue));color:#1a1730}
 .backup-text.fade-in,.truth-text.fade-in,.lyrics-text.fade-in{animation:textFloat .34s ease both}
 @media(max-width:420px){.backup-buttons,.truth-buttons,.lyrics-buttons{flex-direction:column;align-items:stretch}.backup-buttons .primary-button,.backup-buttons .ghost-button,.truth-buttons .primary-button,.truth-buttons .ghost-button,.lyrics-buttons .primary-button,.lyrics-buttons .ghost-button{width:100%}.backup-text,.truth-text,.lyrics-text{font-size:19px}}
+
+/* Heartbox v1.8: daily reset + workout stars */
+.workout-card{position:relative;overflow:hidden}
+.workout-card::before{content:"";position:absolute;inset:-80px -85px auto auto;width:220px;height:220px;border-radius:999px;background:radial-gradient(circle,rgba(185,215,255,.18),transparent 70%);pointer-events:none}
+.workout-text{font-size:20px;line-height:1.72;margin:12px 0 16px;color:var(--text);white-space:pre-line}
+.workout-stars{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 10px;position:relative;z-index:1}
+.workout-star{width:34px;height:34px;display:grid;place-items:center;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);color:rgba(255,247,251,.42);font-weight:800;box-shadow:inset 0 0 0 1px rgba(255,255,255,.03)}
+.workout-star.done{background:linear-gradient(135deg,var(--gold),var(--blue));color:#1b1930;text-shadow:0 0 12px rgba(255,255,255,.5);box-shadow:0 0 22px rgba(185,215,255,.22)}
+.workout-buttons{justify-content:flex-start;flex-wrap:wrap}
+.workout-buttons .primary-button{background:linear-gradient(135deg,var(--blue),var(--pink));color:#171b34}
+@media(max-width:420px){.workout-buttons{flex-direction:column;align-items:stretch}.workout-buttons .primary-button,.workout-buttons .ghost-button{width:100%}.workout-text{font-size:19px}}
