@@ -20,7 +20,7 @@
   <main class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Heartbox · v1.6.2</p>
+        <p class="eyebrow">Heartbox · v1.6.3</p>
         <h1>心光小匣子</h1>
       </div>
       <div class="moon-badge" aria-hidden="true">🌙</div>
@@ -247,7 +247,7 @@
       <div class="card">
         <div class="section-head">
           <h2>最近的小光点</h2>
-          <div class="link-buttons"><button id="lightExportButton" class="text-button">轻导出</button><button id="exportButton" class="text-button">完整导出</button><button id="copySpiritButton" class="text-button">复制给 Spirit</button></div>
+          <div class="link-buttons"><button id="lightExportButton" class="text-button" type="button" data-export-action="light">轻导出</button><button id="exportButton" class="text-button" type="button" data-export-action="full">完整导出</button><button id="copySpiritButton" class="text-button" type="button" data-export-action="spirit">复制给 Spirit</button></div>
         </div>
         <div id="entriesList" class="entries-list"></div>
         
@@ -262,6 +262,22 @@
     <button id="tab-home" class="tab" data-view="home" aria-controls="view-home"><span>💎</span><small>归处</small></button>
     <button id="tab-diary" class="tab" data-view="diary" aria-controls="view-diary"><span>✦</span><small>日记</small></button>
   </nav>
+
+  <div id="exportPanel" class="export-panel" hidden aria-live="polite">
+    <div class="export-panel-card">
+      <div class="export-panel-head">
+        <strong id="exportPanelTitle">导出内容</strong>
+        <button id="closeExportPanelButton" class="text-button" type="button">关闭</button>
+      </div>
+      <p class="tiny-note">如果 app 里不能自动下载或复制，可以在这里长按/全选复制。</p>
+      <textarea id="exportPanelText" rows="9" readonly></textarea>
+      <div class="button-row export-panel-actions">
+        <button id="selectExportTextButton" class="ghost-button" type="button">选中全文</button>
+        <button id="copyExportPanelButton" class="primary-button" type="button">复制这束光</button>
+        <button id="downloadExportPanelButton" class="ghost-button" type="button">下载 .txt</button>
+      </div>
+    </div>
+  </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
   <script src="./app.js"></script>

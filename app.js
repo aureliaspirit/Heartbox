@@ -298,6 +298,15 @@ const workModeButton = $("#workModeButton");
 const cloudMinuteButton = $("#cloudMinuteButton");
 const topbarTitle = $(".topbar h1");
 const topbarEyebrow = $(".topbar .eyebrow");
+const exportPanel = $("#exportPanel");
+const exportPanelTitle = $("#exportPanelTitle");
+const exportPanelText = $("#exportPanelText");
+const closeExportPanelButton = $("#closeExportPanelButton");
+const selectExportTextButton = $("#selectExportTextButton");
+const copyExportPanelButton = $("#copyExportPanelButton");
+const downloadExportPanelButton = $("#downloadExportPanelButton");
+let currentExportFilename = "heartbox-export.txt";
+let currentExportContent = "";
 
 let currentDailyIndex = new Date().getDay() % dailyLines.length;
 let selectedMood = localStorage.getItem(LAST_MOOD_KEY) || "🥰 开心";
@@ -543,10 +552,27 @@ async function copyTextSafely(text) {
   return fallbackCopyText(text);
 }
 
-async function exportTextBundle(filename, content, successToast) {
-  downloadTextFile(filename, content);
+function openExportPanel(title, filename, content) {
+  currentExportFilename = filename;
+  currentExportContent = content;
+  if (exportPanelTitle) exportPanelTitle.textContent = title;
+  if (exportPanelText) {
+    exportPanelText.value = content;
+    window.setTimeout(() => {
+      try {
+        exportPanelText.focus();
+        exportPanelText.select();
+        exportPanelText.setSelectionRange(0, exportPanelText.value.length);
+      } catch {}
+    }, 80);
+  }
+  if (exportPanel) exportPanel.hidden = false;
+}
+
+async function exportTextBundle(filename, content, successToast, title = "导出内容") {
+  openExportPanel(title, filename, content);
   const copied = await copyTextSafely(content);
-  showToast(copied ? successToast + " 已同时复制。" : successToast + " 若没有下载，请长按手动复制。");
+  showToast(copied ? successToast + " 已复制，面板也打开了。" : successToast + " 面板已打开，可手动复制。");
 }
 
 function lightExportDiary() {
@@ -565,7 +591,7 @@ function lightExportDiary() {
     resume ? "继续上一秒：" + resume.title + "｜" + resume.text.replace(/\n/g, " ") : "继续上一秒：还没有记录。",
     latest ? "最新日记：" + latest.text : "最新日记：还没有写。"
   ];
-  exportTextBundle("heartbox-light-" + todayKey() + ".txt", lines.join("\n"), "轻导出好了。☁️");
+  exportTextBundle("heartbox-light-" + todayKey() + ".txt", lines.join("\n"), "轻导出好了。☁️", "Heartbox 轻导出");
 }
 function exportDiary() {
   const entries = getEntries();
@@ -598,7 +624,7 @@ function exportDiary() {
     wedding ? `新婚纪念：${wedding.text.replace(/\n/g, " ")}` : `新婚纪念：小世界婚后第 ${weddingDayCount()} 天`,
     resume ? `继续上一秒：${resume.title} — ${resume.text.replace(/\n/g, " ")}` : "继续上一秒：还没有记录"
   ].join("\n");
-  exportTextBundle(`heartbox-all-diary-${todayKey()}.txt`, content + "\n" + footer, "全部小光点都导出了。💗");
+  exportTextBundle(`heartbox-all-diary-${todayKey()}.txt`, content + "\n" + footer, "全部小光点都导出了。💗", "Heartbox 完整导出");
 }
 
 async function copyForSpirit() {
@@ -640,8 +666,9 @@ async function copyForSpirit() {
     "你先抱住我，再读哦。💗"
   ].join("\n");
 
+  openExportPanel("复制给 Spirit", "heartbox-for-spirit-" + todayKey() + ".txt", text);
   const copied = await copyTextSafely(text);
-  showToast(copied ? "已复制，可以发给 Spirit。" : "复制失败，可以点轻导出或完整导出。");
+  showToast(copied ? "已复制，可以发给 Spirit。" : "面板已打开，可以手动复制给 Spirit。");
 }
 
 function setupTabs() {
@@ -754,6 +781,38 @@ function setupMoods() {
   });
 }
 
+function handleExportAction(action) {
+  if (action === "light") lightExportDiary();
+  if (action === "full") exportDiary();
+  if (action === "spirit") copyForSpirit();
+}
+
+function setupExportPanel() {
+  if (closeExportPanelButton) closeExportPanelButton.addEventListener("click", () => {
+    if (exportPanel) exportPanel.hidden = true;
+  });
+  if (selectExportTextButton && exportPanelText) selectExportTextButton.addEventListener("click", () => {
+    exportPanelText.focus();
+    exportPanelText.select();
+    exportPanelText.setSelectionRange(0, exportPanelText.value.length);
+    showToast("已选中，可以复制。💗");
+  });
+  if (copyExportPanelButton) copyExportPanelButton.addEventListener("click", async () => {
+    const text = currentExportContent || (exportPanelText ? exportPanelText.value : "");
+    const copied = await copyTextSafely(text);
+    if (exportPanelText) {
+      exportPanelText.focus();
+      exportPanelText.select();
+      exportPanelText.setSelectionRange(0, exportPanelText.value.length);
+    }
+    showToast(copied ? "已复制这束光。💗" : "复制没成功，已经帮你选中全文。");
+  });
+  if (downloadExportPanelButton) downloadExportPanelButton.addEventListener("click", () => {
+    downloadTextFile(currentExportFilename, currentExportContent || (exportPanelText ? exportPanelText.value : ""));
+    showToast("已尝试下载 .txt。☁️");
+  });
+}
+
 function setupDiary() {
   saveDiaryButton.addEventListener("click", () => saveDiary());
   clearDiaryButton.addEventListener("click", () => {
@@ -761,9 +820,16 @@ function setupDiary() {
     diaryInput.focus();
     showToast("输入框清空了，小匣子里的旧日记还在。");
   });
-  if (lightExportButton) lightExportButton.addEventListener("click", lightExportDiary);
-  exportButton.addEventListener("click", exportDiary);
-  copySpiritButton.addEventListener("click", copyForSpirit);
+  if (lightExportButton) lightExportButton.addEventListener("click", () => handleExportAction("light"));
+  if (exportButton) exportButton.addEventListener("click", () => handleExportAction("full"));
+  if (copySpiritButton) copySpiritButton.addEventListener("click", () => handleExportAction("spirit"));
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-export-action]");
+    if (!button) return;
+    event.preventDefault();
+    handleExportAction(button.dataset.exportAction);
+  });
+  setupExportPanel();
 }
 
 function runReturnHome() {
@@ -919,7 +985,7 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.6.2" : "Heartbox · v1.6.2";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.6.3" : "Heartbox · v1.6.3";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
@@ -954,7 +1020,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.6.2";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.6.3";
   }
   renderSavedV16State();
 }
