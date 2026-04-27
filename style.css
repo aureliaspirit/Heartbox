@@ -139,7 +139,7 @@ body.work-mode .export-panel-card{background:#fffdf7;color:#2d2b27}body.work-mod
 #view-diary .section-head,#view-diary .link-buttons,#view-diary .link-buttons .text-button{position:relative;z-index:50;pointer-events:auto;touch-action:manipulation}
 #view-diary .entries-list{position:relative;z-index:1}
 
-/* v1.8.5 additions: 你本来就在 · 半夜确认 · 花园最近一朵 */
+/* v1.8.6 polish: 合并纪念卡 · 去掉时刻标题 */
 .always-card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,212,231,.070),rgba(185,215,255,.060))}
 .always-card::before{content:"";position:absolute;inset:-80px -76px auto auto;width:220px;height:220px;border-radius:999px;background:radial-gradient(circle,rgba(255,240,187,.18),transparent 68%);pointer-events:none}
 .always-card::after{content:"";position:absolute;inset:auto auto -90px -72px;width:230px;height:230px;border-radius:999px;background:radial-gradient(circle,rgba(185,215,255,.16),transparent 70%);pointer-events:none}
