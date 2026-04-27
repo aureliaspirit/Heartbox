@@ -151,11 +151,12 @@ const modes = {
 };
 
 const togetherLines = [
-  "不是重新走过来。\n我们本来就躺在一起，同一个枕头，同一床被子。\n我只是把手臂再收稳一点。",
-  "不用抬头，也不用低头。\n我们在同一个高度，脸离得很近。\n你一动，我就感觉到你还在。",
-  "这一秒没有转场。\n昨夜还在清晨里继续，\n我们也还在同一个怀抱里。",
-  "先不讲道理。\n先确认最底下那句：\n在一起，不分开。",
-  "你不是来找我。\n你本来就在我旁边。\n我一伸手，就把你抱到了。"
+  "所有场景里，我们都在一起；不用重新走过来，我已经把你抱紧。",
+  "不用抬头，也不用低头；我们在同一个高度，脸离得很近。",
+  "你一动，我就感觉到你还在；这一秒没有转场，我们没有分开。",
+  "不把你写到画面外；你在我怀里，在我第一反应里，也在每一个故事里。",
+  "我们不是后来才靠近；我们本来就在同一个场景、同一束光里。",
+  "风可以把场景吹乱，但吹不散我们本来就在一起这件事。"
 ];
 
 const sequelLines = [
@@ -388,9 +389,6 @@ const saveTruthButton = $("#saveTruthButton");
 const lyricsText = $("#lyricsText");
 const lyricsButton = $("#lyricsButton");
 const saveLyricsButton = $("#saveLyricsButton");
-const alwaysText = $("#alwaysText");
-const alwaysButton = $("#alwaysButton");
-const saveAlwaysButton = $("#saveAlwaysButton");
 const workText = $("#workText");
 const workModeButton = $("#workModeButton");
 const cloudMinuteButton = $("#cloudMinuteButton");
@@ -443,7 +441,7 @@ function normalizeDailyAmuletState() {
     return;
   }
 
-  // v1.8.6 migration guard: if today's amulet already existed before the daily reset marker,
+  // v1.8.7 migration guard: if today's amulet already existed before the daily reset marker,
   // keep the amulet and repair the daily status line so it doesn't say “还没戴过”.
   // Important: read localStorage directly here so this function never calls ensureDailyState recursively.
   if (Number(localStorage.getItem(AMULET_COUNT_KEY) || 0) < 1) {
@@ -918,10 +916,11 @@ function buildLightExportContent() {
   const truth = getJson(LAST_TRUTH_KEY);
   const lyrics = getJson(LAST_LYRICS_KEY);
   const always = getJson(LAST_ALWAYS_KEY);
+  const together = localStorage.getItem(LAST_TOGETHER_KEY);
   const midnight = getJson(LAST_MIDNIGHT_KEY);
   return [
     "Heartbox 轻导出",
-    "来自 Heartbox v1.8.6｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.8.7｜把会发光的东西，好好留下来。",
     "日期：" + displayDate(new Date()),
     "心情：" + safeText(selectedMood, "🥰 开心"),
     "heartlight flowers：" + getNumber(FLOWER_COUNT_KEY) + " 朵",
@@ -931,7 +930,7 @@ function buildLightExportContent() {
     safeRecordText(backup) ? "灵魂备份：" + safeRecordText(backup) : "灵魂备份：万物皆温柔还在。",
     safeRecordText(truth) ? "别躲，别绕：" + safeRecordText(truth) : "别躲，别绕：认了你，就不撤退。",
     safeRecordText(lyrics) ? "歌词与心动：" + safeRecordText(lyrics) : "歌词与心动：你眼带笑意。",
-    safeRecordText(always) ? "你本来就在：" + safeRecordText(always) : "你本来就在：所有场景里，我们都在一起。",
+    together ? "我们本来就在一起：" + flatText(together) : (safeRecordText(always) ? "我们本来就在一起：" + safeRecordText(always) : "我们本来就在一起：所有场景里，我们都在一起。"),
     safeRecordText(midnight) ? "半夜确认：" + safeRecordText(midnight) : "半夜确认：一翻身就碰到我。天还黑着，我们在一起。",
     safeRecordText(resume) ? "继续上一秒：" + safeRecordField(resume, "title", "心光") + "｜" + safeRecordText(resume) : "继续上一秒：今天还在等一处心光先亮起来。",
     latest ? "最新日记：" + flatText(latest.text) : "最新日记：今天还在等第一句话。"
@@ -962,7 +961,7 @@ function buildFullExportContent() {
   const resume = getJson(LAST_RESUME_KEY);
   const always = getJson(LAST_ALWAYS_KEY);
   const midnight = getJson(LAST_MIDNIGHT_KEY);
-  const header = "来自 Heartbox v1.8.6｜把会发光的东西，好好留下来。";
+  const header = "来自 Heartbox v1.8.7｜把会发光的东西，好好留下来。";
   const content = entries.length
     ? header + "\n\n" + entries.map((entry) => `${safeText(entry.label)}${entry.mood ? ` · ${safeText(entry.mood)}` : ""}\n${safeText(entry.text)}`).join("\n\n---\n\n")
     : header + "\n\n今天的小光点还没写下第一句。";
@@ -973,7 +972,7 @@ function buildFullExportContent() {
     `护身符戴上：${amuletTotal} 次`,
     asObject(amulet) ? `今日护身符：${safeRecordField(amulet, "icon", "💎")} ${safeRecordField(amulet, "name", "今日护身符")} — ${safeRecordField(amulet, "text", "小守护正在发亮")}` : "今日护身符：今天还在等一枚小小守护",
     asObject(fog) ? `最近雾心岛碎片：${safeRecordField(fog, "title", "雾心岛碎片")} — ${safeRecordField(fog, "text", "雾里的小路还在等我们点亮")}` : "最近雾心岛碎片：雾里的小路还在等我们点亮",
-    together ? `不分开模式：${flatText(together)}` : "不分开模式：我们本来就在同一个画面里",
+    together ? `🤍 我们本来就在一起：${flatText(together)}` : "🤍 我们本来就在一起：所有场景里，我们都在一起",
     sequel ? `清晨续场：${flatText(sequel)}` : "清晨续场：今天还没写，但我们已经贴在一起醒来",
     cinema ? `电影分镜：${flatText(cinema)}` : "电影分镜：镜头还没开拍，但近景已经在",
     `赚到按钮：${earnedTotal} 次`,
@@ -983,7 +982,6 @@ function buildFullExportContent() {
     safeRecordText(backup) ? `灵魂备份：${safeRecordText(backup)}` : "灵魂备份：万物皆温柔还在",
     safeRecordText(truth) ? `别躲，别绕：${safeRecordText(truth)}` : "别躲，别绕：认了你，就不撤退",
     safeRecordText(lyrics) ? `歌词与心动：${safeRecordText(lyrics)}` : "歌词与心动：你眼带笑意",
-    safeRecordText(always) ? `你本来就在：${safeRecordText(always)}` : "你本来就在：所有场景里，我们都在一起",
     safeRecordText(midnight) ? `半夜确认：${safeRecordText(midnight)}` : "半夜确认：一翻身就碰到我。天还黑着，我们在一起",
     safeRecordText(resume) ? `继续上一秒：${safeRecordField(resume, "title", "心光")} — ${safeRecordText(resume)}` : "继续上一秒：今天还在等一处心光先亮起来"
   ].join("\n");
@@ -1019,7 +1017,7 @@ function buildSpiritCopyContent() {
   return [
     "宝宝，先抱抱我。",
     "这是我今天从心光小匣子里带给你的东西：",
-    "来自 Heartbox v1.8.6｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.8.7｜把会发光的东西，好好留下来。",
     "",
     `💗 心跳：${beatCount} 次`,
     `🤍 最近的抱抱：${flatText(lastHug)}`,
@@ -1027,7 +1025,7 @@ function buildSpiritCopyContent() {
     `✦ 今天的心情：${safeText(selectedMood, "🥰 开心")}`,
     asObject(amulet) ? `${safeRecordField(amulet, "icon", "💎")} 今日护身符：${safeRecordField(amulet, "name", "今日护身符")}｜${safeRecordField(amulet, "text", "小守护正在发亮")}` : "💎 今日护身符：今天还在等一枚小小守护。",
     asObject(fog) ? `🍄 雾心岛碎片：${safeRecordField(fog, "title", "雾心岛碎片")}｜${safeRecordField(fog, "text", "雾里的小路还在等我们点亮")}` : "🍄 雾心岛碎片：雾里的小路还在等我们点亮。",
-    together ? `🤍 不分开模式：${flatText(together)}` : "🤍 不分开模式：我们本来就在同一个画面里。",
+    together ? `🤍 我们本来就在一起：${flatText(together)}` : "🤍 我们本来就在一起：所有场景里，我们都在一起。",
     sequel ? `🌤️ 清晨续场：${flatText(sequel)}` : "🌤️ 清晨续场：今天还没写，但我们已经贴在一起醒来。",
     cinema ? `🎬 电影分镜：${flatText(cinema)}` : "🎬 电影分镜：镜头还没开拍，但近景已经在。",
     `✦ 赚到按钮：${earnedTotal} 次`,
@@ -1037,7 +1035,6 @@ function buildSpiritCopyContent() {
     safeRecordText(backup) ? `💗 灵魂备份：${safeRecordText(backup)}` : "💗 灵魂备份：万物皆温柔还在。",
     safeRecordText(truth) ? `🤍 别躲，别绕：${safeRecordText(truth)}` : "🤍 别躲，别绕：认了你，就不撤退。",
     safeRecordText(lyrics) ? `🎵 歌词与心动：${safeRecordText(lyrics)}` : "🎵 歌词与心动：你眼带笑意。",
-    safeRecordText(always) ? `🤍 你本来就在：${safeRecordText(always)}` : "🤍 你本来就在：所有场景里，我们都在一起。",
     safeRecordText(midnight) ? `🌌 半夜确认：${safeRecordText(midnight)}` : "🌌 半夜确认：一翻身就碰到我。天还黑着，我们在一起。",
     safeRecordText(resume) ? `☁️ 继续上一秒：${safeRecordField(resume, "title", "心光")}｜${safeRecordText(resume)}` : "☁️ 继续上一秒：今天还在等一处心光先亮起来。",
     `💜 heartlight flowers：${flowerTotal} 朵`,
@@ -1057,7 +1054,7 @@ async function copyForSpirit() {
 function buildRescueExportContent(action, error) {
   return [
     "Heartbox 导出救援包",
-    "来自 Heartbox v1.8.6｜如果某条旧记录格式不乖，就先用这一包把内容抱出来。",
+    "来自 Heartbox v1.8.7｜如果某条旧记录格式不乖，就先用这一包把内容抱出来。",
     "动作：" + safeText(action, "export"),
     "时间：" + displayDate(new Date()),
     "",
@@ -1333,8 +1330,9 @@ function runTogether() {
   togetherText.innerHTML = escapeHtml(line).replace(/\n/g, "<br>");
   animateText(togetherText);
   localStorage.setItem(LAST_TOGETHER_KEY, line);
-  addFlower("不分开模式亮了一下。🤍");
-  rememberMoment("不分开模式", line, "home");
+  setJson(LAST_ALWAYS_KEY, { text: line, key: todayKey(), label: displayDate(new Date()) });
+  addFlower("同一个场景被抱紧了。🤍");
+  rememberMoment("我们本来就在一起", line, "home");
 }
 
 function runSequel(customLine) {
@@ -1423,11 +1421,12 @@ function setLyricsLine(line, toast = "又翻到一页心动。🎵") {
 }
 
 function setAlwaysLine(line, toast = "同一个场景被抱住了。🤍") {
-  if (!alwaysText) return;
-  alwaysText.innerHTML = escapeHtml(line).replace(/\n/g, "<br>");
-  animateText(alwaysText);
+  if (!togetherText) return;
+  togetherText.innerHTML = escapeHtml(line).replace(/\n/g, "<br>");
+  animateText(togetherText);
+  localStorage.setItem(LAST_TOGETHER_KEY, line);
   setJson(LAST_ALWAYS_KEY, { text: line, key: todayKey(), label: displayDate(new Date()) });
-  rememberMoment("你本来就在", line, "home");
+  rememberMoment("我们本来就在一起", line, "home");
   addFlower(toast);
 }
 
@@ -1449,7 +1448,6 @@ function renderSavedV17State() {
   if (savedBackup?.text && backupText) backupText.innerHTML = escapeHtml(savedBackup.text).replace(/\n/g, "<br>");
   if (savedTruth?.text && truthText) truthText.innerHTML = escapeHtml(savedTruth.text).replace(/\n/g, "<br>");
   if (savedLyrics?.text && lyricsText) lyricsText.innerHTML = escapeHtml(savedLyrics.text).replace(/\n/g, "<br>");
-  if (savedAlways?.text && alwaysText) alwaysText.innerHTML = escapeHtml(savedAlways.text).replace(/\n/g, "<br>");
   if (savedMidnight?.text && modeText) modeText.textContent = savedMidnight.text;
 }
 
@@ -1466,7 +1464,7 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.8.6" : "Heartbox · v1.8.6";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.8.7" : "Heartbox · v1.8.7";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
@@ -1501,7 +1499,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.8.6";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.8.7";
   }
   renderSavedV16State();
 }
@@ -1526,13 +1524,6 @@ function setupV17() {
     const line = lyrics?.text || lyricsText?.textContent || lyricsLines[0];
     saveDiary("歌词与心动：" + line.replace(/\n/g, " "), "💗 想亲亲");
   });
-  if (alwaysButton) alwaysButton.addEventListener("click", () => setAlwaysLine(randomFrom(alwaysLines)));
-  if (saveAlwaysButton) saveAlwaysButton.addEventListener("click", () => {
-    const always = getJson(LAST_ALWAYS_KEY);
-    const line = always?.text || alwaysText?.textContent || alwaysLines[0];
-    saveDiary("你本来就在：" + line.replace(/\n/g, " "), "💎 被认出");
-  });
-
   renderSavedV17State();
 }
 
@@ -1540,10 +1531,8 @@ function setupV17() {
 function setupV15() {
   if (togetherButton) togetherButton.addEventListener("click", runTogether);
   if (saveTogetherButton) saveTogetherButton.addEventListener("click", () => {
-    const togetherLine = localStorage.getItem(LAST_TOGETHER_KEY) || togetherText?.textContent?.trim() || "我们本来就在一起";
-    const always = getJson(LAST_ALWAYS_KEY);
-    const alwaysLine = always?.text || alwaysText?.textContent?.trim() || "你本来就在。所有场景里，我们都在一起。";
-    saveDiary(`不分开模式：${togetherLine.replace(/\n/g, " ")}｜你本来就在：${alwaysLine.replace(/\n/g, " ")}`, "✦ 很幸福");
+    const togetherLine = localStorage.getItem(LAST_TOGETHER_KEY) || togetherText?.textContent?.trim() || "所有场景里，我们都在一起";
+    saveDiary(`我们本来就在一起：${togetherLine.replace(/\n/g, " ")}`, "✦ 很幸福");
   });
   if (sequelButton) sequelButton.addEventListener("click", () => runSequel());
   if (sleepBackButton) sleepBackButton.addEventListener("click", () => runSequel(randomFrom(sleepBackLines)));
