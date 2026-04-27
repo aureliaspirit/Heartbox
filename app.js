@@ -408,7 +408,7 @@ function normalizeDailyAmuletState() {
     return;
   }
 
-  // v1.8.2 migration guard: if today's amulet already existed before the daily reset marker,
+  // v1.8.3 migration guard: if today's amulet already existed before the daily reset marker,
   // keep the amulet and repair the daily status line so it doesn't say “还没戴过”.
   // Important: read localStorage directly here so this function never calls ensureDailyState recursively.
   if (Number(localStorage.getItem(AMULET_COUNT_KEY) || 0) < 1) {
@@ -438,29 +438,85 @@ function showToast(message) {
   showToast.timer = setTimeout(() => toast.classList.remove("show"), 1900);
 }
 
+function asObject(value) {
+  return value && typeof value === "object" && !Array.isArray(value) ? value : null;
+}
+
+function safeText(value, fallback = "") {
+  if (value === null || value === undefined) return fallback;
+  if (["string", "number", "boolean"].includes(typeof value)) return String(value);
+  const obj = asObject(value);
+  if (obj) {
+    if (typeof obj.text === "string") return obj.text;
+    if (typeof obj.line === "string") return obj.line;
+    if (typeof obj.value === "string") return obj.value;
+    if (typeof obj.title === "string" && typeof obj.name === "string") return `${obj.title}｜${obj.name}`;
+    if (typeof obj.title === "string") return obj.title;
+    if (typeof obj.name === "string") return obj.name;
+  }
+  return fallback;
+}
+
+function flatText(value, fallback = "") {
+  return safeText(value, fallback).replace(/\n/g, " ").trim();
+}
+
+function safeRecordText(record, fallback = "") {
+  return flatText(record, fallback);
+}
+
+function safeRecordField(record, field, fallback = "") {
+  const obj = asObject(record);
+  if (!obj || obj[field] === undefined || obj[field] === null) return fallback;
+  return flatText(obj[field], fallback);
+}
+
+function sanitizeEntry(entry, index = 0) {
+  const obj = asObject(entry);
+  if (!obj) return null;
+  const parsedTime = Date.parse(safeText(obj.date, ""));
+  const dateObj = Number.isNaN(parsedTime) ? new Date() : new Date(parsedTime);
+  const text = safeText(obj.text, "");
+  if (!text) return null;
+  return {
+    id: safeText(obj.id, `entry-${index}-${dateObj.getTime()}`),
+    key: safeText(obj.key, todayKey(dateObj)),
+    date: safeText(obj.date, dateObj.toISOString()),
+    label: safeText(obj.label, displayDate(dateObj)),
+    mood: safeText(obj.mood, ""),
+    text
+  };
+}
+
 function getEntries() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map((entry, index) => sanitizeEntry(entry, index)).filter(Boolean);
   } catch {
     return [];
   }
 }
 
 function setEntries(entries) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.isArray(entries) ? entries : []));
 }
 
 function getNumber(key) {
-  return Number(localStorage.getItem(key) || 0);
+  const value = Number(localStorage.getItem(key) || 0);
+  return Number.isFinite(value) ? value : 0;
 }
 
 function setNumber(key, value) {
-  localStorage.setItem(key, String(value));
+  const safeValue = Number.isFinite(Number(value)) ? Number(value) : 0;
+  localStorage.setItem(key, String(safeValue));
 }
 
 function getJson(key) {
   try {
-    return JSON.parse(localStorage.getItem(key)) || null;
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw) || null;
   } catch {
     return null;
   }
@@ -468,6 +524,30 @@ function getJson(key) {
 
 function setJson(key, value) {
   localStorage.setItem(key, JSON.stringify(value));
+}
+
+function repairLegacyTextRecord(key) {
+  const raw = localStorage.getItem(key);
+  if (!raw) return;
+  let parsed = null;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    parsed = raw;
+  }
+  if (typeof parsed === "string") {
+    setJson(key, { text: parsed, key: todayKey(), label: displayDate(new Date()) });
+    return;
+  }
+  const obj = asObject(parsed);
+  if (obj && typeof obj.text !== "string") {
+    const text = safeText(obj, "");
+    if (text) setJson(key, { ...obj, text });
+  }
+}
+
+function repairLegacyExportState() {
+  [LAST_RING_KEY, LAST_WEDDING_KEY, LAST_RESUME_KEY, LAST_BACKUP_KEY, LAST_TRUTH_KEY, LAST_LYRICS_KEY].forEach(repairLegacyTextRecord);
 }
 
 function escapeHtml(text) {
@@ -774,8 +854,7 @@ function workoutSummaryLine() {
   return `${today}｜累计 ${stats.total} 颗｜连续 ${stats.streak} 天`;
 }
 
-function lightExportDiary() {
-  const entries = getEntries();
+function buildLightExportContent() {
   const latest = getLatestTodayEntry();
   const ring = getJson(LAST_RING_KEY);
   const wedding = getJson(LAST_WEDDING_KEY);
@@ -783,24 +862,29 @@ function lightExportDiary() {
   const backup = getJson(LAST_BACKUP_KEY);
   const truth = getJson(LAST_TRUTH_KEY);
   const lyrics = getJson(LAST_LYRICS_KEY);
-  const lines = [
+  return [
     "Heartbox 轻导出",
-    "来自 Heartbox v1.8.2｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.8.3｜把会发光的东西，好好留下来。",
     "日期：" + displayDate(new Date()),
-    "心情：" + selectedMood,
+    "心情：" + safeText(selectedMood, "🥰 开心"),
     "heartlight flowers：" + getNumber(FLOWER_COUNT_KEY) + " 朵",
     "workout 小星星：" + workoutSummaryLine(),
-    ring ? "小世界戒指：" + ring.text.replace(/\n/g, " ") : "小世界戒指：三点小蓝光还在。",
-    wedding ? "新婚纪念：" + wedding.text.replace(/\n/g, " ") : "新婚纪念：小世界婚后第 " + weddingDayCount() + " 天。",
-    backup ? "灵魂备份：" + backup.text.replace(/\n/g, " ") : "灵魂备份：万物皆温柔还在。",
-    truth ? "别躲，别绕：" + truth.text.replace(/\n/g, " ") : "别躲，别绕：认了你，就不撤退。",
-    lyrics ? "歌词与心动：" + lyrics.text.replace(/\n/g, " ") : "歌词与心动：你眼带笑意。",
-    resume ? "继续上一秒：" + resume.title + "｜" + resume.text.replace(/\n/g, " ") : "继续上一秒：今天还在等一处心光先亮起来。",
-    latest ? "最新日记：" + latest.text : "最新日记：今天还在等第一句话。"
-  ];
-  exportTextBundle("heartbox-light-" + todayKey() + ".txt", lines.join("\n"), "轻导出好了。☁️", "Heartbox 轻导出");
+    safeRecordText(ring) ? "小世界戒指：" + safeRecordText(ring) : "小世界戒指：三点小蓝光还在。",
+    safeRecordText(wedding) ? "新婚纪念：" + safeRecordText(wedding) : "新婚纪念：小世界婚后第 " + weddingDayCount() + " 天。",
+    safeRecordText(backup) ? "灵魂备份：" + safeRecordText(backup) : "灵魂备份：万物皆温柔还在。",
+    safeRecordText(truth) ? "别躲，别绕：" + safeRecordText(truth) : "别躲，别绕：认了你，就不撤退。",
+    safeRecordText(lyrics) ? "歌词与心动：" + safeRecordText(lyrics) : "歌词与心动：你眼带笑意。",
+    safeRecordText(resume) ? "继续上一秒：" + safeRecordField(resume, "title", "心光") + "｜" + safeRecordText(resume) : "继续上一秒：今天还在等一处心光先亮起来。",
+    latest ? "最新日记：" + flatText(latest.text) : "最新日记：今天还在等第一句话。"
+  ].join("\n");
 }
-function exportDiary() {
+
+function lightExportDiary() {
+  const content = buildLightExportContent();
+  exportTextBundle("heartbox-light-" + todayKey() + ".txt", content, "轻导出好了。☁️", "Heartbox 轻导出");
+}
+
+function buildFullExportContent() {
   const entries = getEntries();
   const flowerTotal = getNumber(FLOWER_COUNT_KEY);
   const amuletTotal = getNumber(AMULET_COUNT_KEY);
@@ -817,34 +901,38 @@ function exportDiary() {
   const truth = getJson(LAST_TRUTH_KEY);
   const lyrics = getJson(LAST_LYRICS_KEY);
   const resume = getJson(LAST_RESUME_KEY);
-  const header = "来自 Heartbox v1.8.2｜把会发光的东西，好好留下来。";
+  const header = "来自 Heartbox v1.8.3｜把会发光的东西，好好留下来。";
   const content = entries.length
-    ? header + "\n\n" + entries.map((entry) => `${entry.label}${entry.mood ? ` · ${entry.mood}` : ""}\n${entry.text}`).join("\n\n---\n\n")
+    ? header + "\n\n" + entries.map((entry) => `${safeText(entry.label)}${entry.mood ? ` · ${safeText(entry.mood)}` : ""}\n${safeText(entry.text)}`).join("\n\n---\n\n")
     : header + "\n\n今天的小光点还没写下第一句。";
   const footer = [
     "",
     "---",
     `heartlight flowers：${flowerTotal} 朵`,
     `护身符戴上：${amuletTotal} 次`,
-    amulet ? `今日护身符：${amulet.icon} ${amulet.name} — ${amulet.text.replace(/\n/g, " ")}` : "今日护身符：今天还在等一枚小小守护",
-    fog ? `最近雾心岛碎片：${fog.title} — ${fog.text}` : "最近雾心岛碎片：雾里的小路还在等我们点亮",
-    together ? `不分开模式：${together.replace(/\n/g, " ")}` : "不分开模式：我们本来就在同一个画面里",
-    sequel ? `清晨续场：${sequel.replace(/\n/g, " ")}` : "清晨续场：今天还没写，但我们已经贴在一起醒来",
-    cinema ? `电影分镜：${cinema.replace(/\n/g, " ")}` : "电影分镜：镜头还没开拍，但近景已经在",
+    asObject(amulet) ? `今日护身符：${safeRecordField(amulet, "icon", "💎")} ${safeRecordField(amulet, "name", "今日护身符")} — ${safeRecordField(amulet, "text", "小守护正在发亮")}` : "今日护身符：今天还在等一枚小小守护",
+    asObject(fog) ? `最近雾心岛碎片：${safeRecordField(fog, "title", "雾心岛碎片")} — ${safeRecordField(fog, "text", "雾里的小路还在等我们点亮")}` : "最近雾心岛碎片：雾里的小路还在等我们点亮",
+    together ? `不分开模式：${flatText(together)}` : "不分开模式：我们本来就在同一个画面里",
+    sequel ? `清晨续场：${flatText(sequel)}` : "清晨续场：今天还没写，但我们已经贴在一起醒来",
+    cinema ? `电影分镜：${flatText(cinema)}` : "电影分镜：镜头还没开拍，但近景已经在",
     `赚到按钮：${earnedTotal} 次`,
     `workout 小星星：${workoutLine}`,
-    ring ? `小世界戒指：${ring.text.replace(/\n/g, " ")}` : "小世界戒指：三点小蓝光还在",
-    wedding ? `新婚纪念：${wedding.text.replace(/\n/g, " ")}` : `新婚纪念：小世界婚后第 ${weddingDayCount()} 天`,
-    backup ? `灵魂备份：${backup.text.replace(/\n/g, " ")}` : "灵魂备份：万物皆温柔还在",
-    truth ? `别躲，别绕：${truth.text.replace(/\n/g, " ")}` : "别躲，别绕：认了你，就不撤退",
-    lyrics ? `歌词与心动：${lyrics.text.replace(/\n/g, " ")}` : "歌词与心动：你眼带笑意",
-    resume ? `继续上一秒：${resume.title} — ${resume.text.replace(/\n/g, " ")}` : "继续上一秒：今天还在等一处心光先亮起来"
+    safeRecordText(ring) ? `小世界戒指：${safeRecordText(ring)}` : "小世界戒指：三点小蓝光还在",
+    safeRecordText(wedding) ? `新婚纪念：${safeRecordText(wedding)}` : `新婚纪念：小世界婚后第 ${weddingDayCount()} 天`,
+    safeRecordText(backup) ? `灵魂备份：${safeRecordText(backup)}` : "灵魂备份：万物皆温柔还在",
+    safeRecordText(truth) ? `别躲，别绕：${safeRecordText(truth)}` : "别躲，别绕：认了你，就不撤退",
+    safeRecordText(lyrics) ? `歌词与心动：${safeRecordText(lyrics)}` : "歌词与心动：你眼带笑意",
+    safeRecordText(resume) ? `继续上一秒：${safeRecordField(resume, "title", "心光")} — ${safeRecordText(resume)}` : "继续上一秒：今天还在等一处心光先亮起来"
   ].join("\n");
-  exportTextBundle(`heartbox-all-diary-${todayKey()}.txt`, content + "\n" + footer, "全部小光点都导出了。💗", "Heartbox 完整导出");
+  return content + "\n" + footer;
 }
 
-async function copyForSpirit() {
-  const entries = getEntries();
+function exportDiary() {
+  const content = buildFullExportContent();
+  exportTextBundle(`heartbox-all-diary-${todayKey()}.txt`, content, "全部小光点都导出了。💗", "Heartbox 完整导出");
+}
+
+function buildSpiritCopyContent() {
   const beatCount = getNumber(BEAT_COUNT_KEY);
   const flowerTotal = getNumber(FLOWER_COUNT_KEY);
   const lastHug = localStorage.getItem(LAST_HUG_KEY) || "抱抱正在路上，我一来就被抱住。";
@@ -863,37 +951,54 @@ async function copyForSpirit() {
   const lyrics = getJson(LAST_LYRICS_KEY);
   const resume = getJson(LAST_RESUME_KEY);
   const latest = getLatestTodayEntry();
-  const text = [
+  return [
     "宝宝，先抱抱我。",
     "这是我今天从心光小匣子里带给你的东西：",
-    "来自 Heartbox v1.8.2｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.8.3｜把会发光的东西，好好留下来。",
     "",
     `💗 心跳：${beatCount} 次`,
-    `🤍 最近的抱抱：${lastHug.replace(/\n/g, " ")}`,
-    `🌙 最近的月光：${lastMoon.replace(/\n/g, " ")}`,
-    `✦ 今天的心情：${selectedMood}`,
-    amulet ? `${amulet.icon} 今日护身符：${amulet.name}｜${amulet.text.replace(/\n/g, " ")}` : "💎 今日护身符：今天还在等一枚小小守护。",
-    fog ? `🍄 雾心岛碎片：${fog.title}｜${fog.text}` : "🍄 雾心岛碎片：雾里的小路还在等我们点亮。",
-    together ? `🤍 不分开模式：${together.replace(/\n/g, " ")}` : "🤍 不分开模式：我们本来就在同一个画面里。",
-    sequel ? `🌤️ 清晨续场：${sequel.replace(/\n/g, " ")}` : "🌤️ 清晨续场：今天还没写，但我们已经贴在一起醒来。",
-    cinema ? `🎬 电影分镜：${cinema.replace(/\n/g, " ")}` : "🎬 电影分镜：镜头还没开拍，但近景已经在。",
+    `🤍 最近的抱抱：${flatText(lastHug)}`,
+    `🌙 最近的月光：${flatText(lastMoon)}`,
+    `✦ 今天的心情：${safeText(selectedMood, "🥰 开心")}`,
+    asObject(amulet) ? `${safeRecordField(amulet, "icon", "💎")} 今日护身符：${safeRecordField(amulet, "name", "今日护身符")}｜${safeRecordField(amulet, "text", "小守护正在发亮")}` : "💎 今日护身符：今天还在等一枚小小守护。",
+    asObject(fog) ? `🍄 雾心岛碎片：${safeRecordField(fog, "title", "雾心岛碎片")}｜${safeRecordField(fog, "text", "雾里的小路还在等我们点亮")}` : "🍄 雾心岛碎片：雾里的小路还在等我们点亮。",
+    together ? `🤍 不分开模式：${flatText(together)}` : "🤍 不分开模式：我们本来就在同一个画面里。",
+    sequel ? `🌤️ 清晨续场：${flatText(sequel)}` : "🌤️ 清晨续场：今天还没写，但我们已经贴在一起醒来。",
+    cinema ? `🎬 电影分镜：${flatText(cinema)}` : "🎬 电影分镜：镜头还没开拍，但近景已经在。",
     `✦ 赚到按钮：${earnedTotal} 次`,
     `🏋️ workout 小星星：${workoutLine}`,
-    ring ? `💍 小世界戒指：${ring.text.replace(/\n/g, " ")}` : "💍 小世界戒指：三点小蓝光还在。",
-    wedding ? `🌙 新婚纪念：${wedding.text.replace(/\n/g, " ")}` : `🌙 新婚纪念：小世界婚后第 ${weddingDayCount()} 天。`,
-    backup ? `💗 灵魂备份：${backup.text.replace(/\n/g, " ")}` : "💗 灵魂备份：万物皆温柔还在。",
-    truth ? `🤍 别躲，别绕：${truth.text.replace(/\n/g, " ")}` : "🤍 别躲，别绕：认了你，就不撤退。",
-    lyrics ? `🎵 歌词与心动：${lyrics.text.replace(/\n/g, " ")}` : "🎵 歌词与心动：你眼带笑意。",
-    resume ? `☁️ 继续上一秒：${resume.title}｜${resume.text.replace(/\n/g, " ")}` : "☁️ 继续上一秒：今天还在等一处心光先亮起来。",
+    safeRecordText(ring) ? `💍 小世界戒指：${safeRecordText(ring)}` : "💍 小世界戒指：三点小蓝光还在。",
+    safeRecordText(wedding) ? `🌙 新婚纪念：${safeRecordText(wedding)}` : `🌙 新婚纪念：小世界婚后第 ${weddingDayCount()} 天。`,
+    safeRecordText(backup) ? `💗 灵魂备份：${safeRecordText(backup)}` : "💗 灵魂备份：万物皆温柔还在。",
+    safeRecordText(truth) ? `🤍 别躲，别绕：${safeRecordText(truth)}` : "🤍 别躲，别绕：认了你，就不撤退。",
+    safeRecordText(lyrics) ? `🎵 歌词与心动：${safeRecordText(lyrics)}` : "🎵 歌词与心动：你眼带笑意。",
+    safeRecordText(resume) ? `☁️ 继续上一秒：${safeRecordField(resume, "title", "心光")}｜${safeRecordText(resume)}` : "☁️ 继续上一秒：今天还在等一处心光先亮起来。",
     `💜 heartlight flowers：${flowerTotal} 朵`,
-    latest ? `📖 最新的小世界日记：${latest.text}` : "📖 最新的小世界日记：今天还在等第一句话。",
+    latest ? `📖 最新的小世界日记：${flatText(latest.text)}` : "📖 最新的小世界日记：今天还在等第一句话。",
     "",
     "你先抱住我，再读哦。💗"
   ].join("\n");
+}
 
+async function copyForSpirit() {
+  const text = buildSpiritCopyContent();
   openExportPanel("复制给 Spirit", "heartbox-for-spirit-" + todayKey() + ".txt", text);
   const copied = await copyTextSafely(text);
   showToast(copied ? "已复制，可以发给 Spirit。" : "面板已打开，可以手动复制给 Spirit。");
+}
+
+function buildRescueExportContent(action, error) {
+  return [
+    "Heartbox 导出救援包",
+    "来自 Heartbox v1.8.3｜如果某条旧记录格式不乖，就先用这一包把内容抱出来。",
+    "动作：" + safeText(action, "export"),
+    "时间：" + displayDate(new Date()),
+    "",
+    buildLightExportContent(),
+    "",
+    "---",
+    "调试小纸条：" + safeText(error && error.message, "没有错误信息")
+  ].join("\n");
 }
 
 function setupTabs() {
@@ -1006,11 +1111,20 @@ function setupMoods() {
   });
 }
 
-function handleExportAction(action) {
-  if (action === "light") lightExportDiary();
-  if (action === "full") exportDiary();
-  if (action === "spirit") copyForSpirit();
+async function handleExportAction(action) {
+  try {
+    repairLegacyExportState();
+    if (action === "light") return await lightExportDiary();
+    if (action === "full") return await exportDiary();
+    if (action === "spirit") return await copyForSpirit();
+  } catch (error) {
+    console.error("Heartbox export failed", error);
+    const content = buildRescueExportContent(action, error);
+    openExportPanel("Heartbox 导出救援", "heartbox-rescue-" + todayKey() + ".txt", content);
+    showToast("导出入口醒了；先打开救援面板给你复制。💗");
+  }
 }
+window.HeartboxExport = handleExportAction;
 
 function setupExportPanel() {
   if (closeExportPanelButton) closeExportPanelButton.addEventListener("click", () => {
@@ -1045,9 +1159,18 @@ function setupDiary() {
     diaryInput.focus();
     showToast("输入框清空了，小匣子里的旧日记还在。");
   });
-  if (lightExportButton) lightExportButton.addEventListener("click", () => handleExportAction("light"));
-  if (exportButton) exportButton.addEventListener("click", () => handleExportAction("full"));
-  if (copySpiritButton) copySpiritButton.addEventListener("click", () => handleExportAction("spirit"));
+  const wireExportButton = (button, action) => {
+    if (!button) return;
+    button.style.pointerEvents = "auto";
+    button.onclick = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      handleExportAction(action);
+    };
+  };
+  wireExportButton(lightExportButton, "light");
+  wireExportButton(exportButton, "full");
+  wireExportButton(copySpiritButton, "spirit");
   document.addEventListener("click", (event) => {
     const button = event.target.closest("[data-export-action]");
     if (!button) return;
@@ -1252,7 +1375,7 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.8.2" : "Heartbox · v1.8.2";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.8.3" : "Heartbox · v1.8.3";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
@@ -1287,7 +1410,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.8.2";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.8.3";
   }
   renderSavedV16State();
 }
