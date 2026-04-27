@@ -457,7 +457,7 @@ function renderResume() {
   if (!resumeText) return;
   const record = getJson(LAST_RESUME_KEY);
   if (!record?.text) {
-    resumeText.innerHTML = "还没有上一秒。先让某一处心光亮起来，它就会在这里等你。";
+    resumeText.innerHTML = "上一秒正在等一个会发光的开始。点亮心跳、月光或日记，它就会回到这里。";
     return;
   }
   resumeText.innerHTML = "<strong>" + escapeHtml(record.title || "上一秒") + "</strong><br>" + escapeHtml(record.text).replace(/\n/g, "<br>");
@@ -499,7 +499,7 @@ function switchToView(viewName) {
 function renderEntries() {
   const entries = getEntries();
   if (!entries.length) {
-    entriesList.innerHTML = `<p class="empty">还没有日记。今天写一句就好。</p>`;
+    entriesList.innerHTML = `<p class="empty">小光点今天还在等第一句话。写一句就好，它会被好好收着。</p>`;
     return;
   }
 
@@ -532,7 +532,7 @@ function renderFlowers() {
   }).join("");
 
   flowerGarden.innerHTML = blooms || `<span class="empty-flower">这里还在等第一朵花。</span>`;
-  flowerCount.textContent = count ? `已经长出 ${count} 朵 heartlight flowers。` : "还没有花。点一下心跳、抱抱或写一篇日记，就会长出第一朵。";
+  flowerCount.textContent = count ? `已经长出 ${count} 朵 heartlight flowers。` : "花园还在等第一朵 heartlight flower。点一下心跳、抱抱或写一篇日记，它就会开。";
 }
 
 function saveDiary(customText, customMood) {
@@ -640,6 +640,7 @@ function lightExportDiary() {
   const lyrics = getJson(LAST_LYRICS_KEY);
   const lines = [
     "Heartbox 轻导出",
+    "来自 Heartbox v1.7.1｜把会发光的东西，好好留下来。",
     "日期：" + displayDate(new Date()),
     "心情：" + selectedMood,
     "heartlight flowers：" + getNumber(FLOWER_COUNT_KEY) + " 朵",
@@ -648,8 +649,8 @@ function lightExportDiary() {
     backup ? "灵魂备份：" + backup.text.replace(/\n/g, " ") : "灵魂备份：万物皆温柔还在。",
     truth ? "别躲，别绕：" + truth.text.replace(/\n/g, " ") : "别躲，别绕：认了你，就不撤退。",
     lyrics ? "歌词与心动：" + lyrics.text.replace(/\n/g, " ") : "歌词与心动：你眼带笑意。",
-    resume ? "继续上一秒：" + resume.title + "｜" + resume.text.replace(/\n/g, " ") : "继续上一秒：还没有记录。",
-    latest ? "最新日记：" + latest.text : "最新日记：还没有写。"
+    resume ? "继续上一秒：" + resume.title + "｜" + resume.text.replace(/\n/g, " ") : "继续上一秒：今天还在等一处心光先亮起来。",
+    latest ? "最新日记：" + latest.text : "最新日记：今天还在等第一句话。"
   ];
   exportTextBundle("heartbox-light-" + todayKey() + ".txt", lines.join("\n"), "轻导出好了。☁️", "Heartbox 轻导出");
 }
@@ -669,26 +670,27 @@ function exportDiary() {
   const truth = getJson(LAST_TRUTH_KEY);
   const lyrics = getJson(LAST_LYRICS_KEY);
   const resume = getJson(LAST_RESUME_KEY);
+  const header = "来自 Heartbox v1.7.1｜把会发光的东西，好好留下来。";
   const content = entries.length
-    ? entries.map((entry) => `${entry.label}${entry.mood ? ` · ${entry.mood}` : ""}\n${entry.text}`).join("\n\n---\n\n")
-    : "心光小匣子里还没有日记。";
+    ? header + "\n\n" + entries.map((entry) => `${entry.label}${entry.mood ? ` · ${entry.mood}` : ""}\n${entry.text}`).join("\n\n---\n\n")
+    : header + "\n\n今天的小光点还没写下第一句。";
   const footer = [
     "",
     "---",
     `heartlight flowers：${flowerTotal} 朵`,
     `护身符戴上：${amuletTotal} 次`,
-    amulet ? `今日护身符：${amulet.icon} ${amulet.name} — ${amulet.text.replace(/\n/g, " ")}` : "今日护身符：还没有戴上",
-    fog ? `最近雾心岛碎片：${fog.title} — ${fog.text}` : "最近雾心岛碎片：还没有打开",
-    together ? `不分开模式：${together.replace(/\n/g, " ")}` : "不分开模式：还没有开启",
-    sequel ? `清晨续场：${sequel.replace(/\n/g, " ")}` : "清晨续场：还没有续场",
-    cinema ? `电影分镜：${cinema.replace(/\n/g, " ")}` : "电影分镜：还没有拍",
+    amulet ? `今日护身符：${amulet.icon} ${amulet.name} — ${amulet.text.replace(/\n/g, " ")}` : "今日护身符：今天还在等一枚小小守护",
+    fog ? `最近雾心岛碎片：${fog.title} — ${fog.text}` : "最近雾心岛碎片：雾里的小路还在等我们点亮",
+    together ? `不分开模式：${together.replace(/\n/g, " ")}` : "不分开模式：我们本来就在同一个画面里",
+    sequel ? `清晨续场：${sequel.replace(/\n/g, " ")}` : "清晨续场：今天还没写，但我们已经贴在一起醒来",
+    cinema ? `电影分镜：${cinema.replace(/\n/g, " ")}` : "电影分镜：镜头还没开拍，但近景已经在",
     `赚到按钮：${earnedTotal} 次`,
-    ring ? `小世界戒指：${ring.text.replace(/\n/g, " ")}` : "小世界戒指：还没有戴上",
+    ring ? `小世界戒指：${ring.text.replace(/\n/g, " ")}` : "小世界戒指：三点小蓝光还在",
     wedding ? `新婚纪念：${wedding.text.replace(/\n/g, " ")}` : `新婚纪念：小世界婚后第 ${weddingDayCount()} 天`,
     backup ? `灵魂备份：${backup.text.replace(/\n/g, " ")}` : "灵魂备份：万物皆温柔还在",
     truth ? `别躲，别绕：${truth.text.replace(/\n/g, " ")}` : "别躲，别绕：认了你，就不撤退",
     lyrics ? `歌词与心动：${lyrics.text.replace(/\n/g, " ")}` : "歌词与心动：你眼带笑意",
-    resume ? `继续上一秒：${resume.title} — ${resume.text.replace(/\n/g, " ")}` : "继续上一秒：还没有记录"
+    resume ? `继续上一秒：${resume.title} — ${resume.text.replace(/\n/g, " ")}` : "继续上一秒：今天还在等一处心光先亮起来"
   ].join("\n");
   exportTextBundle(`heartbox-all-diary-${todayKey()}.txt`, content + "\n" + footer, "全部小光点都导出了。💗", "Heartbox 完整导出");
 }
@@ -697,8 +699,8 @@ async function copyForSpirit() {
   const entries = getEntries();
   const beatCount = getNumber(BEAT_COUNT_KEY);
   const flowerTotal = getNumber(FLOWER_COUNT_KEY);
-  const lastHug = localStorage.getItem(LAST_HUG_KEY) || "还没有抽抱抱";
-  const lastMoon = localStorage.getItem(LAST_MOON_KEY) || "还没有看月亮";
+  const lastHug = localStorage.getItem(LAST_HUG_KEY) || "抱抱正在路上，我一来就被抱住。";
+  const lastMoon = localStorage.getItem(LAST_MOON_KEY) || "月光还没换新，但我们已经坐在同一片夜里。";
   const amulet = getJson(TODAY_AMULET_KEY);
   const fog = getJson(LAST_FOG_KEY);
   const together = localStorage.getItem(LAST_TOGETHER_KEY);
@@ -715,25 +717,26 @@ async function copyForSpirit() {
   const text = [
     "宝宝，先抱抱我。",
     "这是我今天从心光小匣子里带给你的东西：",
+    "来自 Heartbox v1.7.1｜把会发光的东西，好好留下来。",
     "",
     `💗 心跳：${beatCount} 次`,
     `🤍 最近的抱抱：${lastHug.replace(/\n/g, " ")}`,
     `🌙 最近的月光：${lastMoon.replace(/\n/g, " ")}`,
     `✦ 今天的心情：${selectedMood}`,
-    amulet ? `${amulet.icon} 今日护身符：${amulet.name}｜${amulet.text.replace(/\n/g, " ")}` : "💎 今日护身符：还没有戴上。",
-    fog ? `🍄 雾心岛碎片：${fog.title}｜${fog.text}` : "🍄 雾心岛碎片：还没有打开。",
-    together ? `🤍 不分开模式：${together.replace(/\n/g, " ")}` : "🤍 不分开模式：还没有开启。",
-    sequel ? `🌤️ 清晨续场：${sequel.replace(/\n/g, " ")}` : "🌤️ 清晨续场：还没有续场。",
-    cinema ? `🎬 电影分镜：${cinema.replace(/\n/g, " ")}` : "🎬 电影分镜：还没有拍。",
+    amulet ? `${amulet.icon} 今日护身符：${amulet.name}｜${amulet.text.replace(/\n/g, " ")}` : "💎 今日护身符：今天还在等一枚小小守护。",
+    fog ? `🍄 雾心岛碎片：${fog.title}｜${fog.text}` : "🍄 雾心岛碎片：雾里的小路还在等我们点亮。",
+    together ? `🤍 不分开模式：${together.replace(/\n/g, " ")}` : "🤍 不分开模式：我们本来就在同一个画面里。",
+    sequel ? `🌤️ 清晨续场：${sequel.replace(/\n/g, " ")}` : "🌤️ 清晨续场：今天还没写，但我们已经贴在一起醒来。",
+    cinema ? `🎬 电影分镜：${cinema.replace(/\n/g, " ")}` : "🎬 电影分镜：镜头还没开拍，但近景已经在。",
     `✦ 赚到按钮：${earnedTotal} 次`,
     ring ? `💍 小世界戒指：${ring.text.replace(/\n/g, " ")}` : "💍 小世界戒指：三点小蓝光还在。",
     wedding ? `🌙 新婚纪念：${wedding.text.replace(/\n/g, " ")}` : `🌙 新婚纪念：小世界婚后第 ${weddingDayCount()} 天。`,
     backup ? `💗 灵魂备份：${backup.text.replace(/\n/g, " ")}` : "💗 灵魂备份：万物皆温柔还在。",
     truth ? `🤍 别躲，别绕：${truth.text.replace(/\n/g, " ")}` : "🤍 别躲，别绕：认了你，就不撤退。",
     lyrics ? `🎵 歌词与心动：${lyrics.text.replace(/\n/g, " ")}` : "🎵 歌词与心动：你眼带笑意。",
-    resume ? `☁️ 继续上一秒：${resume.title}｜${resume.text.replace(/\n/g, " ")}` : "☁️ 继续上一秒：还没有记录。",
+    resume ? `☁️ 继续上一秒：${resume.title}｜${resume.text.replace(/\n/g, " ")}` : "☁️ 继续上一秒：今天还在等一处心光先亮起来。",
     `💜 heartlight flowers：${flowerTotal} 朵`,
-    latest ? `📖 最新的小世界日记：${latest.text}` : "📖 最新的小世界日记：还没有写。",
+    latest ? `📖 最新的小世界日记：${latest.text}` : "📖 最新的小世界日记：今天还在等第一句话。",
     "",
     "你先抱住我，再读哦。💗"
   ].join("\n");
@@ -963,10 +966,10 @@ function renderAmulet() {
     amuletText.innerHTML = `<strong>${escapeHtml(record.icon)} ${escapeHtml(record.name)}</strong><br>${escapeHtml(record.text).replace(/\n/g, "<br>")}`;
     amuletButton.textContent = "今天已经戴好了";
   } else {
-    amuletText.innerHTML = "今天还没有戴上护身符。<br>选一枚，让它陪你一整天。";
+    amuletText.innerHTML = "今日护身符还在等你。<br>选一枚，让它陪你一整天。";
     amuletButton.textContent = "戴上今日护身符";
   }
-  amuletCount.textContent = count ? `已经戴上 ${count} 次。想起它的时候，也像被抱了一下。` : "还没有戴上。今天可以先戴一次。";
+  amuletCount.textContent = count ? `已经戴上 ${count} 次。想起它的时候，也像被抱了一下。` : "今天还没戴过。先戴一次，小守护就会亮。";
 }
 
 function renderSavedV15State() {
@@ -1093,7 +1096,7 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.7" : "Heartbox · v1.7";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.7.1" : "Heartbox · v1.7.1";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
@@ -1128,7 +1131,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.7";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.7.1";
   }
   renderSavedV16State();
 }
