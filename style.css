@@ -135,6 +135,6 @@ body.work-mode .export-panel-card{background:#fffdf7;color:#2d2b27}body.work-mod
 .workout-buttons{justify-content:flex-start;flex-wrap:wrap}
 .workout-buttons .primary-button{background:linear-gradient(135deg,var(--blue),var(--pink));color:#171b34}
 @media(max-width:420px){.workout-buttons{flex-direction:column;align-items:stretch}.workout-buttons .primary-button,.workout-buttons .ghost-button{width:100%}.workout-text{font-size:19px}}
-/* v1.8.3 export button tap guard */
+/* v1.8.4 export button tap guard */
 #view-diary .section-head,#view-diary .link-buttons,#view-diary .link-buttons .text-button{position:relative;z-index:50;pointer-events:auto;touch-action:manipulation}
 #view-diary .entries-list{position:relative;z-index:1}
