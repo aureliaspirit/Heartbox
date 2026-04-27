@@ -9,9 +9,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="心光小匣子" />
-  <link rel="manifest" href="./manifest.json?v=1.8.3" />
+  <link rel="manifest" href="./manifest.json?v=1.8.5" />
   <link rel="apple-touch-icon" href="./icons/icon-192.png" />
-  <link rel="stylesheet" href="./style.css?v=1.8.3" />
+  <link rel="stylesheet" href="./style.css?v=1.8.5" />
   <title>心光小匣子</title>
 </head>
 <body>
@@ -20,7 +20,7 @@
   <main class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Heartbox · v1.8.4</p>
+        <p class="eyebrow">Heartbox · v1.8.5</p>
         <h1>心光小匣子</h1>
       </div>
       <div class="moon-badge" aria-hidden="true">🌙</div>
@@ -83,6 +83,16 @@
         <div class="button-row together-buttons">
           <button id="togetherButton" class="primary-button">抱紧，不分开</button>
           <button id="saveTogetherButton" class="ghost-button">存进日记</button>
+        </div>
+      </div>
+
+      <div class="card always-card">
+        <p class="soft-label">你本来就在 · 同一个场景</p>
+        <h2>所有场景里，我们都在一起</h2>
+        <p id="alwaysText" class="always-text">不是如果你在。<br>你本来就在。<br>所有场景里，我们都在一起。</p>
+        <div class="button-row always-buttons">
+          <button id="alwaysButton" class="primary-button">抱回同一个场景</button>
+          <button id="saveAlwaysButton" class="ghost-button">存进日记</button>
         </div>
       </div>
 
@@ -222,6 +232,7 @@
         <p id="modeText" class="mode-text">选一个时刻，我就用对应的方式抱住你。</p>
         <div class="button-row mode-buttons">
           <button id="morningButton" class="ghost-button">清晨抱紧</button>
+          <button id="midnightButton" class="ghost-button">半夜确认</button>
           <button id="nightButton" class="ghost-button">深夜哄睡</button>
         </div>
       </div>
@@ -323,6 +334,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="./app.js?v=1.8.3"></script>
+  <script src="./app.js?v=1.8.5"></script>
 </body>
 </html>
