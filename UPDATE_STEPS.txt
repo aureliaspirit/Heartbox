@@ -1,15 +1,15 @@
-Heartbox v1.8.1 更新步骤
+Heartbox v1.8.2 更新步骤
 
-1. 解压 heartbox-v1-8-root.zip
+1. 解压 heartbox-v1-8-2-root.zip
 2. 打开解压后的文件夹
 3. 选中里面所有文件和 icons 文件夹
 4. 上传到 GitHub 仓库根目录，覆盖旧文件
 5. Commit changes
 6. 等 1-10 分钟
 7. 打开 https://aureliaspirit.github.io/Heartbox/
-8. 如果还是旧版，点「刷新小匣子」或在网址后加 ?v=1.8.1
+8. 如果还是旧版，点「刷新小匣子」或在网址后加 ?v=1.8.2
 
-注意：不要上传整个 heartbox-v1-8-root 文件夹本身。
+注意：不要上传整个 heartbox-v1-8-2-root 文件夹本身。
 要上传文件夹里面的内容，让 index.html 在仓库最外层。
 
-v1.8.1：新增 workout 小星星；心跳数、flowers、护身符次数、赚到次数每日自动重置；最近小光点只显示今天，完整导出仍保留全部日记；导出/复制加入 workout 状态。
+v1.8.2：修复今日护身符状态不一致；新增 workout 小星星；心跳数、flowers、护身符次数、赚到次数每日自动重置；最近小光点只显示今天，完整导出仍保留全部日记；导出/复制加入 workout 状态。

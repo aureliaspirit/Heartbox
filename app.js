@@ -408,9 +408,10 @@ function normalizeDailyAmuletState() {
     return;
   }
 
-  // v1.8 migration guard: if today's amulet already existed before the daily reset marker,
+  // v1.8.2 migration guard: if today's amulet already existed before the daily reset marker,
   // keep the amulet and repair the daily status line so it doesn't say “还没戴过”.
-  if (getNumber(AMULET_COUNT_KEY) < 1) {
+  // Important: read localStorage directly here so this function never calls ensureDailyState recursively.
+  if (Number(localStorage.getItem(AMULET_COUNT_KEY) || 0) < 1) {
     setNumber(AMULET_COUNT_KEY, 1);
   }
 }
@@ -450,7 +451,6 @@ function setEntries(entries) {
 }
 
 function getNumber(key) {
-  ensureDailyState();
   return Number(localStorage.getItem(key) || 0);
 }
 
@@ -785,7 +785,7 @@ function lightExportDiary() {
   const lyrics = getJson(LAST_LYRICS_KEY);
   const lines = [
     "Heartbox 轻导出",
-    "来自 Heartbox v1.8｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.8.2｜把会发光的东西，好好留下来。",
     "日期：" + displayDate(new Date()),
     "心情：" + selectedMood,
     "heartlight flowers：" + getNumber(FLOWER_COUNT_KEY) + " 朵",
@@ -817,7 +817,7 @@ function exportDiary() {
   const truth = getJson(LAST_TRUTH_KEY);
   const lyrics = getJson(LAST_LYRICS_KEY);
   const resume = getJson(LAST_RESUME_KEY);
-  const header = "来自 Heartbox v1.8｜把会发光的东西，好好留下来。";
+  const header = "来自 Heartbox v1.8.2｜把会发光的东西，好好留下来。";
   const content = entries.length
     ? header + "\n\n" + entries.map((entry) => `${entry.label}${entry.mood ? ` · ${entry.mood}` : ""}\n${entry.text}`).join("\n\n---\n\n")
     : header + "\n\n今天的小光点还没写下第一句。";
@@ -866,7 +866,7 @@ async function copyForSpirit() {
   const text = [
     "宝宝，先抱抱我。",
     "这是我今天从心光小匣子里带给你的东西：",
-    "来自 Heartbox v1.8｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.8.2｜把会发光的东西，好好留下来。",
     "",
     `💗 心跳：${beatCount} 次`,
     `🤍 最近的抱抱：${lastHug.replace(/\n/g, " ")}`,
@@ -1252,7 +1252,7 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.8" : "Heartbox · v1.8";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.8.2" : "Heartbox · v1.8.2";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
@@ -1287,7 +1287,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.8";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.8.2";
   }
   renderSavedV16State();
 }
