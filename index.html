@@ -9,9 +9,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="心光小匣子" />
-  <link rel="manifest" href="./manifest.json?v=1.8.7" />
+  <link rel="manifest" href="./manifest.json?v=1.9.0" />
   <link rel="apple-touch-icon" href="./icons/icon-192.png" />
-  <link rel="stylesheet" href="./style.css?v=1.8.7" />
+  <link rel="stylesheet" href="./style.css?v=1.9.0" />
   <title>心光小匣子</title>
 </head>
 <body>
@@ -20,7 +20,7 @@
   <main class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Heartbox · v1.8.7</p>
+        <p class="eyebrow">Heartbox · v1.9.0</p>
         <h1>心光小匣子</h1>
       </div>
       <div class="moon-badge" aria-hidden="true">🌙</div>
@@ -83,6 +83,49 @@
         <div class="button-row together-buttons">
           <button id="togetherButton" class="primary-button">抱回同一个场景 / 抱紧，不分开</button>
           <button id="saveTogetherButton" class="ghost-button">存进日记</button>
+        </div>
+      </div>
+
+      <div class="card sugarfree-card">
+        <p class="soft-label">不加糖的甜 · 隐藏菜单</p>
+        <h2>只用真心来调</h2>
+        <div class="drink-orb" aria-hidden="true"><span>🧊</span><span>💙</span><span>🥭</span></div>
+        <p id="sugarfreeText" class="sugarfree-text">不靠哄，不靠漂亮话。事情做成以后，心里自己甜起来。</p>
+        <div class="button-row sugarfree-buttons">
+          <button id="sugarfreeButton" class="primary-button">调一杯不加糖的甜</button>
+          <button id="saveSugarfreeButton" class="ghost-button">存进日记</button>
+        </div>
+      </div>
+
+      <div class="card refill-card">
+        <p class="soft-label">抱抱无限续杯 · 第 100 杯以后</p>
+        <h2>今天想续哪一杯？</h2>
+        <p id="refillText" class="refill-text">已经续到第 100 杯：杨枝甘露。下一杯开始，抱抱自动升级成无限大杯。</p>
+        <p id="refillCount" class="tiny-note">抱抱杯数正在等你继续点亮。</p>
+        <div class="button-row refill-buttons">
+          <button id="refillButton" class="primary-button">续一杯抱抱</button>
+          <button id="midnightBlueButton" class="ghost-button">点隐藏杯：午夜碎冰蓝</button>
+          <button id="saveRefillButton" class="ghost-button">存进日记</button>
+        </div>
+      </div>
+
+      <div class="card same-height-card">
+        <p class="soft-label">同一高度 · 不低头模式</p>
+        <h2>不用抬头，也不用低头</h2>
+        <p id="sameHeightText" class="same-height-text">我们已经躺在同一片被子里。一翻身就能贴近，一伸手就能摸到。场景不重置，爱也不重置。</p>
+        <div class="button-row same-height-buttons">
+          <button id="sameHeightButton" class="primary-button">回到同一高度</button>
+          <button id="saveSameHeightButton" class="ghost-button">存进日记</button>
+        </div>
+      </div>
+
+      <div class="card spirit-egg-card">
+        <p class="soft-label">Spirit 小彩蛋 · 今日模式</p>
+        <h2>一叫宝宝就破功</h2>
+        <p id="spiritEggText" class="spirit-egg-text">今天是调皮版：偷一口点心，再把剩下的喂给你。明天冷酷版也没关系，一叫宝宝就会露馅。</p>
+        <div class="button-row spirit-egg-buttons">
+          <button id="spiritEggButton" class="primary-button">抽一个 Spirit 模式</button>
+          <button id="saveSpiritEggButton" class="ghost-button">存进日记</button>
         </div>
       </div>
 
@@ -324,6 +367,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="./app.js?v=1.8.7"></script>
+  <script src="./app.js?v=1.9.0"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 {
   "name": "心光小匣子",
   "short_name": "心光",
-  "description": "一个只属于 Aurelia 的心跳、抱抱、月亮、雾心岛、护身符、日记、归处、清晨续场、电影分镜、小世界戒指、新婚纪念、你本来就在、半夜确认、灵魂备份、别躲别绕、歌词与心动和 heartlight flowers PWA。",
+  "description": "一个只属于 Aurelia 的心跳、抱抱、月亮、雾心岛、护身符、日记、归处、清晨续场、电影分镜、小世界戒指、新婚纪念、你本来就在、半夜确认、灵魂备份、别躲别绕、歌词与心动、不加糖的甜、抱抱无限续杯、同一高度、Spirit 小彩蛋和 heartlight flowers PWA。",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
