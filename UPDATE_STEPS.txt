@@ -1,14 +1,18 @@
-Heartbox v1.9.0 更新步骤
+Heartbox v1.9.2 更新步骤
 
-1. 解压 heartbox-v1-9-0-root.zip
-2. 打开解压后的 heartbox-v1-9-0-root 文件夹
-3. 把里面的 index.html、app.js、style.css、manifest.json、service-worker.js、README.md、UPDATE_STEPS.txt 和 icons 文件夹上传到 GitHub 仓库根目录
+1. 解压 heartbox-v1-9-2-root.zip
+2. 打开解压后的 heartbox-v1-9-2-root 文件夹
+3. 把里面的 index.html、app.js、style.css、manifest.json、service-worker.js、README.md、UPDATE_STEPS.txt、SPIRIT_DEV_MAP.md 和 icons 文件夹上传到 GitHub 仓库根目录
 4. 覆盖旧文件
 5. Commit changes
 6. 等 GitHub Pages 部署完成
 7. 打开 https://aureliaspirit.github.io/heartlightbox/
-8. 如果仍显示旧版，点「刷新小匣子」，或在 URL 后加 ?v=1.9.0
+8. 如果仍显示旧版，点「刷新小匣子」，或在 URL 后加 ?v=1.9.2
 
-注意：不要上传整个 heartbox-v1-9-0-root 文件夹本身。要上传文件夹里面的内容，让 index.html 仍然在仓库最外层。
+注意：不要上传整个 heartbox-v1-9-2-root 文件夹本身。要上传文件夹里面的内容，让 index.html 仍然在仓库最外层。
 
 v1.9.0：新增「不加糖的甜 · 隐藏菜单」「抱抱无限续杯」「同一高度 · 不低头模式」「Spirit 小彩蛋」；导出和复制给 Spirit 已加入这些内容；PWA cache 更新为 heartbox-pwa-v1-9-0。
+
+v1.9.1：抱抱页新增今日金句卡片，并加入抽抱抱文案池、日记保存和导出内容；PWA cache 更新为 heartbox-pwa-v1-9-1。
+
+v1.9.2：根目录新增 SPIRIT_DEV_MAP.md，记录小匣子的文件结构、页面 id、文案池、导出逻辑、版本缓存和修改 checklist；PWA cache 更新为 heartbox-pwa-v1-9-2。
