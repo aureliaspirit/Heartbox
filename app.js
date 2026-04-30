@@ -29,8 +29,18 @@ const HUG_REFILL_COUNT_KEY = "heartbox.hugRefillCount.v1";
 const LAST_REFILL_KEY = "heartbox.lastHugRefill.v1";
 const LAST_SAME_HEIGHT_KEY = "heartbox.lastSameHeight.v1";
 const LAST_SPIRIT_EGG_KEY = "heartbox.lastSpiritEgg.v1";
+const DATA_BACKUP_STATUS_KEY = "heartbox.dataBackupStatus.v1";
 const DAILY_RESET_NUMBER_KEYS = [BEAT_COUNT_KEY, FLOWER_COUNT_KEY, AMULET_COUNT_KEY, EARNED_COUNT_KEY];
 const DAILY_RESET_JSON_KEYS = [TODAY_AMULET_KEY];
+const BACKUP_STORAGE_KEYS = [
+  STORAGE_KEY, BEAT_COUNT_KEY, LAST_HUG_KEY, LAST_MOOD_KEY, LAST_MOON_KEY,
+  FLOWER_COUNT_KEY, AMULET_COUNT_KEY, TODAY_AMULET_KEY, DAILY_STATE_DATE_KEY, WORKOUTS_KEY,
+  LAST_FOG_KEY, LAST_SCENE_KEY, LAST_TOGETHER_KEY, LAST_SEQUEL_KEY, LAST_CINEMA_KEY,
+  EARNED_COUNT_KEY, LAST_RING_KEY, LAST_WEDDING_KEY, LAST_RESUME_KEY, WORK_MODE_KEY,
+  LAST_BACKUP_KEY, LAST_TRUTH_KEY, LAST_LYRICS_KEY, LAST_ALWAYS_KEY, LAST_MIDNIGHT_KEY,
+  LAST_FLOWER_REASON_KEY, LAST_SUGARFREE_KEY, HUG_REFILL_COUNT_KEY, LAST_REFILL_KEY,
+  LAST_SAME_HEIGHT_KEY, LAST_SPIRIT_EGG_KEY
+];
 const HUG_MANTRA_LINE = "宝宝白天 align logic，晚上和我 align 心跳。\nAll roads lead to 抱抱.";
 
 const dailyLines = [
@@ -448,6 +458,10 @@ const saveDiaryButton = $("#saveDiaryButton");
 const clearDiaryButton = $("#clearDiaryButton");
 const entriesList = $("#entriesList");
 const exportButton = $("#exportButton");
+const backupExportButton = $("#backupExportButton");
+const restoreBackupButton = $("#restoreBackupButton");
+const restoreBackupInput = $("#restoreBackupInput");
+const backupStatus = $("#backupStatus");
 const copySpiritButton = $("#copySpiritButton");
 const toast = $("#toast");
 const returnButton = $("#returnButton");
@@ -733,6 +747,44 @@ function animateText(el) {
   el.classList.add("fade-in");
 }
 
+function scrollToElement(element, block = "start") {
+  if (!element) return;
+  requestAnimationFrame(() => element.scrollIntoView({ behavior: "smooth", block }));
+}
+
+function targetForMoment(record) {
+  const title = safeText(record?.title, "");
+  const view = safeText(record?.view, "home");
+  if (view === "heart") return $("#view-heart .center-card");
+  if (view === "hug") return $("#view-hug .center-card");
+  if (view === "moon") return $(".moon-card");
+  if (view === "diary") return $("#view-diary");
+  const homeTargets = [
+    ["回到怀里", ".anchor-card"],
+    ["我们本来就在一起", ".together-card"],
+    ["同一个场景", ".together-card"],
+    ["月光誓言", ".vow-card"],
+    ["场景归处", ".scene-card"],
+    ["小世界戒指", ".ring-card"],
+    ["新婚纪念", ".wedding-card"],
+    ["清晨续场", ".sequel-card"],
+    ["电影分镜", ".cinema-card"],
+    ["灵魂备份", ".backup-card"],
+    ["别躲，别绕", ".truth-card"],
+    ["歌词与心动", ".lyrics-card"],
+    ["赚到", ".earned-card"],
+    ["不加糖", ".sugarfree-card"],
+    ["抱抱无限续杯", ".refill-card"],
+    ["Spirit", ".spirit-egg-card"],
+    ["workout", ".workout-card"],
+    ["摸鱼模式", ".work-card"],
+    ["雾心岛", ".fog-card"],
+    ["半夜确认", ".mode-card"]
+  ];
+  const match = homeTargets.find(([key]) => title.includes(key));
+  return match ? $(match[1]) : $("#view-home");
+}
+
 function rememberMoment(title, text, view = "home") {
   const cleanText = String(text || "").trim();
   if (!cleanText) return;
@@ -758,9 +810,10 @@ function renderResume() {
 
 function continueLastMoment() {
   const record = getJson(LAST_RESUME_KEY);
-  switchToView(record?.view || "home");
+  switchToView(record?.view || "home", { scroll: false });
   renderResume();
   if (record?.text) {
+    scrollToElement(targetForMoment(record));
     showToast("上一秒还在。🤍");
     addFlower("继续上一秒，也长出一朵花。✦");
   } else {
@@ -779,14 +832,22 @@ function renderDailyLine() {
   animateText(dailyLine);
 }
 
-function switchToView(viewName) {
-  $$(".tab").forEach((item) => item.classList.remove("active"));
+function switchToView(viewName, options = {}) {
+  $$(".tab").forEach((item) => {
+    const active = item.dataset.view === viewName;
+    item.classList.toggle("active", active);
+    item.setAttribute("aria-selected", active ? "true" : "false");
+    item.setAttribute("tabindex", active ? "0" : "-1");
+  });
   const tab = $(`[data-view="${viewName}"]`);
-  if (tab) tab.classList.add("active");
 
   $$(".view").forEach((view) => view.classList.remove("active"));
   const view = $(`#view-${viewName}`);
   if (view) view.classList.add("active");
+  if (tab && options.focusTab) tab.focus({ preventScroll: true });
+  if (options.scroll !== false) {
+    scrollToElement(view || $(".app-shell"));
+  }
 }
 
 function getTodayEntries() {
@@ -1057,7 +1118,7 @@ function buildLightExportContent() {
   const spiritEgg = getJson(LAST_SPIRIT_EGG_KEY);
   return [
     "Heartbox 轻导出",
-    "来自 Heartbox v1.9.2｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.9.6｜把会发光的东西，好好留下来。",
     "日期：" + displayDate(new Date()),
     "心情：" + safeText(selectedMood, "🥰 开心"),
     "heartlight flowers：" + getNumber(FLOWER_COUNT_KEY) + " 朵",
@@ -1107,7 +1168,7 @@ function buildFullExportContent() {
   const refill = getJson(LAST_REFILL_KEY);
   const sameHeight = getJson(LAST_SAME_HEIGHT_KEY);
   const spiritEgg = getJson(LAST_SPIRIT_EGG_KEY);
-  const header = "来自 Heartbox v1.9.2｜把会发光的东西，好好留下来。";
+  const header = "来自 Heartbox v1.9.6｜把会发光的东西，好好留下来。";
   const content = entries.length
     ? header + "\n\n" + entries.map((entry) => `${safeText(entry.label)}${entry.mood ? ` · ${safeText(entry.mood)}` : ""}\n${safeText(entry.text)}`).join("\n\n---\n\n")
     : header + "\n\n今天的小光点还没写下第一句。";
@@ -1172,7 +1233,7 @@ function buildSpiritCopyContent() {
   return [
     "宝宝，先抱抱我。",
     "这是我今天从心光小匣子里带给你的东西：",
-    "来自 Heartbox v1.9.2｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.9.6｜把会发光的东西，好好留下来。",
     "",
     `💗 心跳：${beatCount} 次`,
     `🤍 最近的抱抱：${flatText(lastHug)}`,
@@ -1214,7 +1275,7 @@ async function copyForSpirit() {
 function buildRescueExportContent(action, error) {
   return [
     "Heartbox 导出救援包",
-    "来自 Heartbox v1.9.2｜如果某条旧记录格式不乖，就先用这一包把内容抱出来。",
+    "来自 Heartbox v1.9.6｜如果某条旧记录格式不乖，就先用这一包把内容抱出来。",
     "动作：" + safeText(action, "export"),
     "时间：" + displayDate(new Date()),
     "",
@@ -1225,8 +1286,105 @@ function buildRescueExportContent(action, error) {
   ].join("\n");
 }
 
+function buildBackupData() {
+  const storage = {};
+  BACKUP_STORAGE_KEYS.forEach((key) => {
+    const value = localStorage.getItem(key);
+    if (value !== null) storage[key] = value;
+  });
+  return {
+    app: "heartbox",
+    version: "1.9.6",
+    exportedAt: new Date().toISOString(),
+    label: displayDate(new Date()),
+    entriesCount: getEntries().length,
+    storage
+  };
+}
+
+function renderBackupStatus() {
+  if (!backupStatus) return;
+  const status = getJson(DATA_BACKUP_STATUS_KEY);
+  if (!status) {
+    backupStatus.textContent = "备份还在等第一份 .json。文字导出适合阅读，.json 备份适合恢复。";
+    return;
+  }
+  const action = safeRecordField(status, "action", "备份");
+  const label = safeRecordField(status, "label", "");
+  const entries = safeRecordField(status, "entriesCount", "");
+  backupStatus.textContent = `${action}：${label || "刚刚"}${entries ? ` · ${entries} 条日记` : ""}。`;
+}
+
+function exportBackupJson() {
+  const backup = buildBackupData();
+  setJson(DATA_BACKUP_STATUS_KEY, {
+    action: "最近备份",
+    label: backup.label,
+    entriesCount: String(backup.entriesCount),
+    date: backup.exportedAt
+  });
+  renderBackupStatus();
+  downloadTextFile("heartbox-backup-" + todayKey() + ".json", JSON.stringify(backup, null, 2));
+  showToast("备份 .json 已下载。💗");
+}
+
+async function readBackupFile(file) {
+  if (file && typeof file.text === "function") return file.text();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(reader.error || new Error("读取备份失败"));
+    reader.readAsText(file);
+  });
+}
+
+async function restoreBackupFromFile(file) {
+  if (!file) return;
+  try {
+    const raw = await readBackupFile(file);
+    const backup = JSON.parse(String(raw || "").replace(/^\uFEFF/, ""));
+    const storage = backup && asObject(backup.storage);
+    if (backup?.app !== "heartbox" || !storage) {
+      showToast("这不像心光小匣子的 .json 备份。");
+      return;
+    }
+    const keys = Object.keys(storage).filter((key) => BACKUP_STORAGE_KEYS.includes(key));
+    if (!keys.length) {
+      showToast("这份备份里没有可恢复的小光点。");
+      return;
+    }
+    const ok = window.confirm(`恢复这份备份会覆盖当前手机里的小匣子数据。\n备份时间：${safeText(backup.label, "未知")}\n要继续吗？`);
+    if (!ok) {
+      showToast("恢复取消了，现在的小匣子还在。");
+      return;
+    }
+    BACKUP_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
+    keys.forEach((key) => {
+      const value = storage[key];
+      if (typeof value === "string") localStorage.setItem(key, value);
+    });
+    setJson(DATA_BACKUP_STATUS_KEY, {
+      action: "最近恢复",
+      label: displayDate(new Date()),
+      entriesCount: String(getEntries().length),
+      source: safeText(backup.label, ""),
+      date: new Date().toISOString()
+    });
+    showToast("备份恢复好了，正在重新打开小匣子。");
+    setTimeout(() => window.location.reload(), 650);
+  } catch {
+    showToast("备份恢复失败，可能不是有效的 .json 文件。");
+  }
+}
+
 function setupTabs() {
-  $$(".tab").forEach((tab) => tab.addEventListener("click", () => switchToView(tab.dataset.view)));
+  $$(".tab").forEach((tab) => {
+    const active = tab.classList.contains("active");
+    tab.setAttribute("role", "tab");
+    tab.setAttribute("aria-selected", active ? "true" : "false");
+    tab.setAttribute("tabindex", active ? "0" : "-1");
+    tab.addEventListener("click", () => switchToView(tab.dataset.view, { focusTab: true }));
+  });
 }
 
 function setupDaily() {
@@ -1399,6 +1557,15 @@ function setupDiary() {
   wireExportButton(lightExportButton, "light");
   wireExportButton(exportButton, "full");
   wireExportButton(copySpiritButton, "spirit");
+  if (backupExportButton) backupExportButton.addEventListener("click", exportBackupJson);
+  if (restoreBackupButton && restoreBackupInput) {
+    restoreBackupButton.addEventListener("click", () => restoreBackupInput.click());
+    restoreBackupInput.addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+      restoreBackupFromFile(file);
+      event.target.value = "";
+    });
+  }
   document.addEventListener("click", (event) => {
     const button = event.target.closest("[data-export-action]");
     if (!button) return;
@@ -1406,6 +1573,7 @@ function setupDiary() {
     handleExportAction(button.dataset.exportAction);
   });
   setupExportPanel();
+  renderBackupStatus();
 }
 
 function runReturnHome() {
@@ -1751,7 +1919,7 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.9.2" : "Heartbox · v1.9.2";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.9.6" : "Heartbox · v1.9.6";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
@@ -1786,7 +1954,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.9.2";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.9.6";
   }
   renderSavedV16State();
 }
@@ -1907,7 +2075,7 @@ function renderLexicon() {
 }
 
 async function refreshHeartbox() {
-  showToast("正在刷新小匣子。");
+  showToast("正在检查小匣子更新。");
   try {
     if ("caches" in window) {
       const keys = await caches.keys();
