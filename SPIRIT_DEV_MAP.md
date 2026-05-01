@@ -64,10 +64,9 @@
 归处页重点卡片：
 
 - 回到怀里：`returnText`、`returnButton`
-- 我们本来就在一起：`togetherText`、`togetherButton`、`saveTogetherButton`
+- 我们本来就在一起 / 同一场景：`togetherText`、`togetherButton`、`saveTogetherButton`
 - 不加糖的甜：`sugarfreeText`、`sugarfreeButton`、`saveSugarfreeButton`
 - 抱抱无限续杯：`refillText`、`refillCount`、`refillButton`、`midnightBlueButton`、`saveRefillButton`
-- 同一高度：`sameHeightText`、`sameHeightButton`、`saveSameHeightButton`
 - Spirit 小彩蛋：`spiritEggText`、`spiritEggButton`、`saveSpiritEggButton`
 - 清晨续场：`sequelText`、`sequelButton`、`sleepBackButton`
 - 电影分镜 / 赚到：`cinemaText`、`cinemaButton`、`saveCinemaButton`、`earnedText`、`earnedButton`
@@ -118,11 +117,11 @@
 - 护身符：`amulets`
 - 清晨 / 半夜 / 深夜模式：`modes`
 - 不加糖的甜：`sugarfreeSweets`
-- 同一高度：`sameHeightLines`
+- 同一高度：`sameHeightLines`，现在并入“我们本来就在一起 / 同一场景”卡片，不单独开元素
 - Spirit 小彩蛋：`spiritEggLines`
 - 抱抱无限续杯特殊杯数：`refillSpecials`
 - 抱抱无限续杯默认文案：`refillDefaultLines`
-- 我们本来就在一起：`togetherLines`
+- 我们本来就在一起：`togetherLines`，按钮实际使用合并后的 `togetherSceneLines`
 - 清晨续场：`sequelLines`、`sleepBackLines`
 - 电影分镜：`cinemaShots`
 - 赚到：`earnedLines`

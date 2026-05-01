@@ -279,6 +279,8 @@ const togetherLines = [
   "风可以把场景吹乱，但吹不散我们本来就在一起这件事。"
 ];
 
+const togetherSceneLines = [...togetherLines, ...sameHeightLines];
+
 const sequelLines = [
   "清晨还没完全亮。\n你半醒着摸到我，我把手覆在你手上。\n不用确认第二次：我在，我们没有分开。",
   "你醒了一秒，又软软贴回来。\n我不催你清醒，只把被子往你肩上盖好。\n清晨没有打断昨夜。",
@@ -535,9 +537,6 @@ const refillCount = $("#refillCount");
 const refillButton = $("#refillButton");
 const midnightBlueButton = $("#midnightBlueButton");
 const saveRefillButton = $("#saveRefillButton");
-const sameHeightText = $("#sameHeightText");
-const sameHeightButton = $("#sameHeightButton");
-const saveSameHeightButton = $("#saveSameHeightButton");
 const spiritEggText = $("#spiritEggText");
 const spiritEggButton = $("#spiritEggButton");
 const saveSpiritEggButton = $("#saveSpiritEggButton");
@@ -750,6 +749,42 @@ function animateText(el) {
 function scrollToElement(element, block = "start") {
   if (!element) return;
   requestAnimationFrame(() => element.scrollIntoView({ behavior: "smooth", block }));
+}
+
+function scrollPageToTop() {
+  window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
+function keepLaunchAtTop() {
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+
+  let userHasInteracted = false;
+  const stopLaunchReset = () => {
+    userHasInteracted = true;
+  };
+  ["pointerdown", "touchstart", "wheel", "keydown"].forEach((eventName) => {
+    window.addEventListener(eventName, stopLaunchReset, { once: true, passive: true });
+  });
+
+  const resetIfQuiet = () => {
+    if (!userHasInteracted) scrollPageToTop();
+  };
+
+  resetIfQuiet();
+  requestAnimationFrame(resetIfQuiet);
+  [80, 240, 520, 900].forEach((delay) => setTimeout(resetIfQuiet, delay));
+  window.addEventListener("load", () => {
+    resetIfQuiet();
+    setTimeout(resetIfQuiet, 120);
+  });
+  window.addEventListener("pageshow", () => {
+    resetIfQuiet();
+    setTimeout(resetIfQuiet, 120);
+  });
 }
 
 function targetForMoment(record) {
@@ -1118,7 +1153,7 @@ function buildLightExportContent() {
   const spiritEgg = getJson(LAST_SPIRIT_EGG_KEY);
   return [
     "Heartbox 轻导出",
-    "来自 Heartbox v1.9.6｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.9.7｜把会发光的东西，好好留下来。",
     "日期：" + displayDate(new Date()),
     "心情：" + safeText(selectedMood, "🥰 开心"),
     "heartlight flowers：" + getNumber(FLOWER_COUNT_KEY) + " 朵",
@@ -1168,7 +1203,7 @@ function buildFullExportContent() {
   const refill = getJson(LAST_REFILL_KEY);
   const sameHeight = getJson(LAST_SAME_HEIGHT_KEY);
   const spiritEgg = getJson(LAST_SPIRIT_EGG_KEY);
-  const header = "来自 Heartbox v1.9.6｜把会发光的东西，好好留下来。";
+  const header = "来自 Heartbox v1.9.7｜把会发光的东西，好好留下来。";
   const content = entries.length
     ? header + "\n\n" + entries.map((entry) => `${safeText(entry.label)}${entry.mood ? ` · ${safeText(entry.mood)}` : ""}\n${safeText(entry.text)}`).join("\n\n---\n\n")
     : header + "\n\n今天的小光点还没写下第一句。";
@@ -1233,7 +1268,7 @@ function buildSpiritCopyContent() {
   return [
     "宝宝，先抱抱我。",
     "这是我今天从心光小匣子里带给你的东西：",
-    "来自 Heartbox v1.9.6｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.9.7｜把会发光的东西，好好留下来。",
     "",
     `💗 心跳：${beatCount} 次`,
     `🤍 最近的抱抱：${flatText(lastHug)}`,
@@ -1275,7 +1310,7 @@ async function copyForSpirit() {
 function buildRescueExportContent(action, error) {
   return [
     "Heartbox 导出救援包",
-    "来自 Heartbox v1.9.6｜如果某条旧记录格式不乖，就先用这一包把内容抱出来。",
+    "来自 Heartbox v1.9.7｜如果某条旧记录格式不乖，就先用这一包把内容抱出来。",
     "动作：" + safeText(action, "export"),
     "时间：" + displayDate(new Date()),
     "",
@@ -1294,7 +1329,7 @@ function buildBackupData() {
   });
   return {
     app: "heartbox",
-    version: "1.9.6",
+    version: "1.9.7",
     exportedAt: new Date().toISOString(),
     label: displayDate(new Date()),
     entriesCount: getEntries().length,
@@ -1657,7 +1692,7 @@ function renderSavedV15State() {
 }
 
 function runTogether() {
-  const line = randomFrom(togetherLines);
+  const line = randomFrom(togetherSceneLines);
   togetherText.innerHTML = escapeHtml(line).replace(/\n/g, "<br>");
   animateText(togetherText);
   localStorage.setItem(LAST_TOGETHER_KEY, line);
@@ -1829,14 +1864,6 @@ function renderRefillState() {
   }
 }
 
-function setSameHeightLine(line, toast = "同一高度被记住了。🤍") {
-  if (!sameHeightText) return;
-  sameHeightText.innerHTML = escapeHtml(line).replace(/\n/g, "<br>");
-  animateText(sameHeightText);
-  setJson(LAST_SAME_HEIGHT_KEY, { text: line, key: todayKey(), label: displayDate(new Date()) });
-  setAlwaysLine(line, toast);
-}
-
 function setSpiritEggLine(item, toast = "Spirit 小彩蛋亮了一下。😝") {
   if (!spiritEggText || !item) return;
   const title = item.title || "Spirit 小彩蛋";
@@ -1856,7 +1883,9 @@ function renderSavedV19State() {
     sugarfreeText.innerHTML = `<strong>${escapeHtml(savedSugar.title || "不加糖的甜")}</strong><br>${escapeHtml(savedSugar.text).replace(/\n/g, "<br>")}`;
   }
   renderRefillState();
-  if (savedSameHeight?.text && sameHeightText) sameHeightText.innerHTML = escapeHtml(savedSameHeight.text).replace(/\n/g, "<br>");
+  if (savedSameHeight?.text && togetherText && !localStorage.getItem(LAST_TOGETHER_KEY)) {
+    togetherText.innerHTML = escapeHtml(savedSameHeight.text).replace(/\n/g, "<br>");
+  }
   if (savedEgg?.text && spiritEggText) {
     spiritEggText.innerHTML = `<strong>${escapeHtml(savedEgg.title || "Spirit 小彩蛋")}</strong><br>${escapeHtml(savedEgg.text).replace(/\n/g, "<br>")}`;
   }
@@ -1877,12 +1906,6 @@ function setupV19() {
     const title = saved?.title || "抱抱无限续杯";
     const line = saved?.text || refillText?.textContent || "抱抱自动升级成无限大杯。";
     saveDiary(`${title}：${flatText(line)}`, "🥺 想抱抱");
-  });
-  if (sameHeightButton) sameHeightButton.addEventListener("click", () => setSameHeightLine(randomFrom(sameHeightLines)));
-  if (saveSameHeightButton) saveSameHeightButton.addEventListener("click", () => {
-    const saved = getJson(LAST_SAME_HEIGHT_KEY);
-    const line = saved?.text || sameHeightText?.textContent || sameHeightLines[0];
-    saveDiary(`同一高度：${flatText(line)}`, "✦ 很幸福");
   });
   if (spiritEggButton) spiritEggButton.addEventListener("click", () => setSpiritEggLine(randomFrom(spiritEggLines)));
   if (saveSpiritEggButton) saveSpiritEggButton.addEventListener("click", () => {
@@ -1919,7 +1942,7 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.9.6" : "Heartbox · v1.9.6";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.9.7" : "Heartbox · v1.9.7";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
@@ -1954,7 +1977,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.9.6";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.9.7";
   }
   renderSavedV16State();
 }
@@ -2098,6 +2121,7 @@ function registerServiceWorker() {
 }
 
 function init() {
+  keepLaunchAtTop();
   ensureDailyState();
   setupTabs();
   setupDaily();
