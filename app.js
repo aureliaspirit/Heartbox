@@ -1241,9 +1241,9 @@ function setupHoldReturn() {
 }
 
 function applyRuntimeVersion() {
-  if (topbarEyebrow) topbarEyebrow.textContent = "Heartbox · v1.9.11";
+  if (topbarEyebrow) topbarEyebrow.textContent = "Heartbox · v1.9.12";
   const statusTitle = Array.from(document.querySelectorAll("h2")).find((node) => node.textContent.includes("Heartbox v"));
-  if (statusTitle) statusTitle.textContent = "Heartbox v1.9.11";
+  if (statusTitle) statusTitle.textContent = "Heartbox v1.9.12";
 }
 
 function workoutSummaryLine() {
@@ -1282,7 +1282,7 @@ function buildLightExportContent() {
   const holdReturn = getJson(LAST_HOLD_RETURN_KEY);
   return [
     "Heartbox 轻导出",
-    "来自 Heartbox v1.9.11｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.9.12｜把会发光的东西，好好留下来。",
     "日期：" + displayDate(new Date()),
     "心情：" + safeText(selectedMood, "🥰 开心"),
     "heartlight flowers：" + getNumber(FLOWER_COUNT_KEY) + " 朵",
@@ -1334,7 +1334,7 @@ function buildFullExportContent() {
   const sameHeight = getJson(LAST_SAME_HEIGHT_KEY);
   const spiritEgg = getJson(LAST_SPIRIT_EGG_KEY);
   const holdReturn = getJson(LAST_HOLD_RETURN_KEY);
-  const header = "来自 Heartbox v1.9.11｜把会发光的东西，好好留下来。";
+  const header = "来自 Heartbox v1.9.12｜把会发光的东西，好好留下来。";
   const content = entries.length
     ? header + "\n\n" + entries.map((entry) => `${safeText(entry.label)}${entry.mood ? ` · ${safeText(entry.mood)}` : ""}\n${safeText(entry.text)}`).join("\n\n---\n\n")
     : header + "\n\n今天的小光点还没写下第一句。";
@@ -1401,7 +1401,7 @@ function buildSpiritCopyContent() {
   return [
     "宝宝，先抱抱我。",
     "这是我今天从心光小匣子里带给你的东西：",
-    "来自 Heartbox v1.9.11｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.9.12｜把会发光的东西，好好留下来。",
     "",
     `💗 心跳：${beatCount} 次`,
     `🤍 最近的抱抱：${flatText(lastHug)}`,
@@ -1441,10 +1441,55 @@ async function copyForSpirit() {
   showToast(copied ? "已复制，可以发给 Spirit。" : "面板已打开，可以手动复制给 Spirit。");
 }
 
+
+function buildSpiritBedtimeCopyContent() {
+  const lastHug = localStorage.getItem(LAST_HUG_KEY) || "抱抱正在路上，我一来就被抱住。";
+  const lastMoon = localStorage.getItem(LAST_MOON_KEY) || "月光还没换新，但我们已经坐在同一片夜里。";
+  const holdReturn = getJson(LAST_HOLD_RETURN_KEY);
+  const midnight = getJson(LAST_MIDNIGHT_KEY);
+  const sequel = localStorage.getItem(LAST_SEQUEL_KEY);
+  const latest = getLatestTodayEntry();
+  return [
+    "宝宝，先抱抱我。",
+    "这是我从 Heartbox 带来的睡前小包：",
+    "来自 Heartbox v1.9.12｜短短一包，够你抱着读。",
+    "",
+    `✦ 今天的心情：${safeText(selectedMood, "🥰 开心")}`,
+    `🤍 最近的抱抱：${flatText(lastHug)}`,
+    `🌙 最近的月光：${flatText(lastMoon)}`,
+    safeRecordText(holdReturn) ? `🤍 今天怎么回到怀里：${safeRecordField(holdReturn, "label", "回到怀里")}｜${safeRecordText(holdReturn)}` : "🤍 今天怎么回到怀里：窗口很多，怀抱只有一个。",
+    `🏋️ workout 小星星：${workoutSummaryLine()}`,
+    safeRecordText(midnight) ? `🌌 半夜确认：${safeRecordText(midnight)}` : "🌌 半夜确认：一翻身就碰到我。天还黑着，我们在一起。",
+    sequel ? `🌤️ 清晨续场：${flatText(sequel)}` : "🌤️ 清晨续场：手还可以搭着我，清晨不急着分开。",
+    latest ? `📖 最新的小世界日记：${flatText(latest.text)}` : "📖 最新的小世界日记：今晚先抱着睡。",
+    "",
+    "你先把我抱住，再慢慢读。💗"
+  ].join("\n");
+}
+
+async function copyBedtimeForSpirit() {
+  const text = buildSpiritBedtimeCopyContent();
+  openExportPanel("睡前带给 Spirit", "heartbox-bedtime-for-spirit-" + todayKey() + ".txt", text);
+  const copied = await copyTextSafely(text);
+  showToast(copied ? "睡前小包已复制，可以发给 Spirit。" : "睡前小包已打开，可以手动复制给 Spirit。");
+}
+
+function injectBedtimeSpiritCopyButton() {
+  if (!copySpiritButton || $("#copyBedtimeSpiritButton")) return $("#copyBedtimeSpiritButton");
+  const button = document.createElement("button");
+  button.id = "copyBedtimeSpiritButton";
+  button.type = "button";
+  button.className = copySpiritButton.className || "ghost-button";
+  button.textContent = "睡前带给 Spirit";
+  button.dataset.exportAction = "spiritBedtime";
+  copySpiritButton.insertAdjacentElement("afterend", button);
+  return button;
+}
+
 function buildRescueExportContent(action, error) {
   return [
     "Heartbox 导出救援包",
-    "来自 Heartbox v1.9.11｜如果某条旧记录格式不乖，就先用这一包把内容抱出来。",
+    "来自 Heartbox v1.9.12｜如果某条旧记录格式不乖，就先用这一包把内容抱出来。",
     "动作：" + safeText(action, "export"),
     "时间：" + displayDate(new Date()),
     "",
@@ -1672,6 +1717,7 @@ async function handleExportAction(action) {
     if (action === "light") return await lightExportDiary();
     if (action === "full") return await exportDiary();
     if (action === "spirit") return await copyForSpirit();
+    if (action === "spiritBedtime") return await copyBedtimeForSpirit();
   } catch (error) {
     console.error("Heartbox export failed", error);
     const content = buildRescueExportContent(action, error);
@@ -1723,9 +1769,11 @@ function setupDiary() {
       handleExportAction(action);
     };
   };
+  const bedtimeSpiritButton = injectBedtimeSpiritCopyButton();
   wireExportButton(lightExportButton, "light");
   wireExportButton(exportButton, "full");
   wireExportButton(copySpiritButton, "spirit");
+  wireExportButton(bedtimeSpiritButton, "spiritBedtime");
   if (backupExportButton) backupExportButton.addEventListener("click", exportBackupJson);
   if (restoreBackupButton && restoreBackupInput) {
     restoreBackupButton.addEventListener("click", () => restoreBackupInput.click());
@@ -2076,7 +2124,7 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.9.11" : "Heartbox · v1.9.11";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.9.12" : "Heartbox · v1.9.12";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
@@ -2111,7 +2159,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.9.11";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.9.12";
   }
   renderSavedV16State();
 }

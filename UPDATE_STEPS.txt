@@ -1,3 +1,26 @@
+Heartbox v1.9.12 小修步骤
+
+直接上传覆盖这 4 个文件：
+- app.js
+- service-worker.js
+- README.md
+- UPDATE_STEPS.txt
+
+新增内容：
+- 日记页保留原来的「复制给 Spirit」完整大包。
+- 新增「睡前带给 Spirit」短版按钮。
+- 睡前版只带今日心情、最近抱抱、最近月光、今天怎么回到怀里、workout 小星星、半夜确认、清晨续场和最新日记。
+- 不改旧 localStorage key，不清空数据。
+- PWA cache 升级到 heartbox-pwa-v1-9-12。
+
+上传后：
+1. 打开网页。
+2. 点「检查更新」。
+3. 关闭 PWA / Safari 标签再重新打开一次。
+4. 如果仍是旧内容，等 10-20 秒再刷新一次，让 service worker 完成替换。
+
+---
+
 Heartbox v1.9.11 小修步骤
 
 直接上传覆盖这 4 个文件：
