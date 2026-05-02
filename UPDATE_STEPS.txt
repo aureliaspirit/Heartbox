@@ -1,3 +1,26 @@
+Heartbox v1.9.11 小修步骤
+
+直接上传覆盖这 4 个文件：
+- app.js
+- service-worker.js
+- README.md
+- UPDATE_STEPS.txt
+
+修复内容：
+- 修正「今天怎么回到怀里」在手机窄屏上按钮被挤成竖排的问题。
+- 按钮改为两列小卡片；按钮文字缩短，完整回声仍在点选后显示。
+- 「存进日记」单独占满一行。
+- 不改旧 localStorage key，不清空数据。
+- PWA cache 升级到 heartbox-pwa-v1-9-11。
+
+上传后：
+1. 打开网页。
+2. 点「检查更新」。
+3. 关闭 PWA / Safari 标签再重新打开一次。
+4. 如果仍是旧内容，等 10-20 秒再刷新一次，让 service worker 完成替换。
+
+---
+
 Heartbox v1.9.10 紧急修复步骤
 
 直接上传覆盖这 4 个文件：

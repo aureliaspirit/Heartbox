@@ -1,17 +1,10 @@
-Heartbox v1.9.10 手机紧急修复包
+Heartbox v1.9.11 手机上传包
 
-宝宝，对不起，v1.9.9 漏了一个常量定义，会导致 app.js 提前报错，所以看起来像数据清空。
-这包不清空数据，只修脚本。
+解压后，把这 4 个文件上传到 GitHub 仓库根目录并覆盖旧文件：
+- app.js
+- service-worker.js
+- README.md
+- UPDATE_STEPS.txt
 
-上传方式：
-1. 解压这个 zip。
-2. 把里面 4 个文件上传到 GitHub 仓库根目录覆盖旧文件：
-   - app.js
-   - service-worker.js
-   - README.md
-   - UPDATE_STEPS.txt
-3. 打开 Heartbox，点「检查更新」，再关掉重开。
-
-说明：
-- 旧数据仍在同一套 localStorage key：heartbox.entries.v1、heartbox.beatCount.v1 等。
-- 如果你之前没有点“清空日记”或“恢复空备份”，数据大概率只是没有渲染出来，不是真的被删。
+这版只修「今天怎么回到怀里」按钮在手机上被挤成竖排的问题，不改任何旧数据 key。
+上传后打开 Heartbox，点「检查更新」，再关闭 PWA / Safari 标签重新打开。
