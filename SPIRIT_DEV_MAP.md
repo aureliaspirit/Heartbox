@@ -197,10 +197,11 @@
 - `buildLightExportContent()`：轻导出。
 - `buildFullExportContent()`：完整导出。
 - `buildSpiritCopyContent()`：复制给 Spirit。
-- `copyForSpirit()`：打开面板并尝试复制。
+- `buildDiaryExportSelection()` / `buildSpiritExportSelection()`：完整导出和复制给 Spirit 的逐项选择。
+- `copyForSpirit()`：打开可选择面板；用户勾选后再点「复制这束光」。
 - `buildRescueExportContent()`：复制/下载失败时的救援导出。
 - `openExportPanel()`：导出面板。
-- `exportTextBundle()`：复制 + 下载 + 打开面板。
+- `exportTextBundle()`：轻导出等无需选择的内容会复制 + 打开面板。
 
 新增重要内容时，至少检查这三处：
 

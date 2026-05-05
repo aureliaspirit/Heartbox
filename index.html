@@ -10,13 +10,13 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="心光小匣子" />
   <meta name="format-detection" content="telephone=no" />
-  <link rel="manifest" href="./manifest.json?v=1.9.8" />
+  <link rel="manifest" href="./manifest.json?v=1.9.13" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png" />
   <link rel="apple-touch-icon" sizes="167x167" href="./icons/icon-167.png" />
   <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152.png" />
   <link rel="apple-touch-icon" sizes="120x120" href="./icons/icon-120.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
-  <link rel="stylesheet" href="./style.css?v=1.9.8" />
+  <link rel="stylesheet" href="./style.css?v=1.9.13" />
   <title>心光小匣子</title>
 </head>
 <body>
@@ -25,7 +25,7 @@
   <main class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Heartbox · v1.9.8</p>
+        <p class="eyebrow">Heartbox · v1.9.13</p>
         <h1>心光小匣子</h1>
       </div>
       <div class="moon-badge" aria-hidden="true">🌙</div>
@@ -333,7 +333,7 @@
 
         <div class="card app-status-card">
           <p class="soft-label">小匣子状态 · 主屏幕版</p>
-          <h2>Heartbox v1.9.8</h2>
+          <h2>Heartbox v1.9.13</h2>
           <p class="app-status-text">主屏幕图标、离线缓存和本地小光点都在这里。弱网时先抱住缓存，联网后再悄悄换新。</p>
           <button id="refreshAppButton" class="ghost-button">检查更新</button>
         </div>
@@ -389,6 +389,16 @@
         <button id="closeExportPanelButton" class="text-button" type="button">关闭</button>
       </div>
       <p class="tiny-note">如果 app 里不能自动下载或复制，可以在这里长按/全选复制。</p>
+      <div id="exportSelectionPanel" class="export-selection-panel" hidden>
+        <div class="export-selection-head">
+          <strong id="exportSelectionTitle">选择要带走的内容</strong>
+          <div class="export-selection-tools">
+            <button id="selectAllExportItemsButton" class="text-button" type="button">全选</button>
+            <button id="clearExportItemsButton" class="text-button" type="button">清空</button>
+          </div>
+        </div>
+        <div id="exportSelectionList" class="export-selection-list"></div>
+      </div>
       <textarea id="exportPanelText" rows="9" readonly></textarea>
       <div class="button-row export-panel-actions">
         <button id="selectExportTextButton" class="ghost-button" type="button">选中全文</button>
@@ -399,6 +409,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="./app.js?v=1.9.8"></script>
+  <script src="./app.js?v=1.9.13"></script>
 </body>
 </html>

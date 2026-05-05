@@ -108,9 +108,20 @@ body.work-mode{background:#f7f3ea;color:#2d2b27}body.work-mode .stars,body.work-
 .export-panel-card{width:min(680px,100%);max-height:82vh;overflow:auto;border-radius:28px;padding:18px;background:linear-gradient(145deg,rgba(37,43,76,.98),rgba(24,29,58,.98));border:1px solid rgba(255,255,255,.16);box-shadow:0 28px 90px rgba(0,0,0,.45)}
 .export-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;color:var(--text)}
 .export-panel textarea{width:100%;box-sizing:border-box;margin:12px 0 14px;border-radius:20px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.08);color:var(--text);font:600 14px/1.58 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;padding:14px;resize:vertical;-webkit-user-select:text;user-select:text}
+.export-selection-panel{margin:12px 0 10px;padding:12px;border-radius:20px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13)}
+.export-selection-panel[hidden]{display:none!important}
+.export-selection-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.export-selection-head strong{font-size:14px}
+.export-selection-tools{display:flex;gap:12px;flex-wrap:wrap}
+.export-selection-list{display:grid;gap:8px;max-height:220px;overflow:auto;padding-right:2px}
+.export-selection-item{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:flex-start;padding:10px;border-radius:16px;background:rgba(0,0,0,.12);border:1px solid rgba(255,255,255,.10)}
+.export-selection-item input{width:18px;height:18px;margin:2px 0 0;accent-color:var(--pink2)}
+.export-selection-item span{display:block}
+.export-selection-label{font-weight:800;font-size:14px;line-height:1.35}
+.export-selection-preview{margin-top:3px;color:var(--soft);font-size:12px;line-height:1.45}
 .export-panel-actions{justify-content:flex-start;flex-wrap:wrap}.export-panel-actions .primary-button,.export-panel-actions .ghost-button{min-height:44px;padding:0 16px}
-body.work-mode .export-panel-card{background:#fffdf7;color:#2d2b27}body.work-mode .export-panel textarea{background:rgba(45,43,39,.06);color:#2d2b27;border-color:rgba(45,43,39,.15)}body.work-mode .export-panel-head{color:#2d2b27}
-@media(max-width:520px){.export-panel{padding:12px;align-items:flex-end}.export-panel-card{border-radius:24px}.export-panel-actions{flex-direction:column;align-items:stretch}.export-panel-actions .primary-button,.export-panel-actions .ghost-button{width:100%}}
+body.work-mode .export-panel-card{background:#fffdf7;color:#2d2b27}body.work-mode .export-panel textarea{background:rgba(45,43,39,.06);color:#2d2b27;border-color:rgba(45,43,39,.15)}body.work-mode .export-panel-head{color:#2d2b27}body.work-mode .export-selection-panel{background:rgba(45,43,39,.05);border-color:rgba(45,43,39,.12)}body.work-mode .export-selection-item{background:rgba(45,43,39,.045);border-color:rgba(45,43,39,.10)}
+@media(max-width:520px){.export-panel{padding:12px;align-items:flex-end}.export-panel-card{border-radius:24px}.export-selection-head{align-items:flex-start;flex-direction:column}.export-selection-list{max-height:180px}.export-panel-actions{flex-direction:column;align-items:stretch}.export-panel-actions .primary-button,.export-panel-actions .ghost-button{width:100%}}
 
 
 /* v1.7 additions: 灵魂备份 · 别躲别绕 · 歌词与心动 */
