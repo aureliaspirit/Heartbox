@@ -68,6 +68,7 @@
 - 不加糖的甜：`sugarfreeText`、`sugarfreeButton`、`saveSugarfreeButton`
 - 抱抱无限续杯：`refillText`、`refillCount`、`refillButton`、`midnightBlueButton`、`saveRefillButton`
 - Spirit 小彩蛋：`spiritEggText`、`spiritEggButton`、`saveSpiritEggButton`
+- 灯塔与双圣树：`lighthouseTreeText`、`lighthouseTreeTitle`、`.lighthouse-tree-button`、`saveLighthouseTreeButton`
 - 清晨续场：`sequelText`、`sequelButton`、`sleepBackButton`
 - 电影分镜 / 赚到：`cinemaText`、`cinemaButton`、`saveCinemaButton`、`earnedText`、`earnedButton`
 - 灵魂备份 / 别躲别绕 / 歌词与心动：`backupText`、`truthText`、`lyricsText` 及各自按钮
@@ -100,7 +101,7 @@
 - v1.5 起的归处内容：`LAST_TOGETHER_KEY`、`LAST_SEQUEL_KEY`、`LAST_CINEMA_KEY`、`EARNED_COUNT_KEY`
 - 戒指 / 婚礼 / 继续上一秒 / 摸鱼：`LAST_RING_KEY`、`LAST_WEDDING_KEY`、`LAST_RESUME_KEY`、`WORK_MODE_KEY`
 - v1.7 内容：`LAST_BACKUP_KEY`、`LAST_TRUTH_KEY`、`LAST_LYRICS_KEY`、`LAST_ALWAYS_KEY`、`LAST_MIDNIGHT_KEY`
-- v1.9 内容：`LAST_SUGARFREE_KEY`、`HUG_REFILL_COUNT_KEY`、`LAST_REFILL_KEY`、`LAST_SAME_HEIGHT_KEY`、`LAST_SPIRIT_EGG_KEY`
+- v1.9 内容：`LAST_SUGARFREE_KEY`、`HUG_REFILL_COUNT_KEY`、`LAST_REFILL_KEY`、`LAST_SAME_HEIGHT_KEY`、`LAST_SPIRIT_EGG_KEY`、`LAST_LIGHTHOUSE_TREE_KEY`
 
 如果新增一个会被保存和导出的卡片，通常要新增一个 `LAST_..._KEY`。
 
@@ -119,6 +120,7 @@
 - 不加糖的甜：`sugarfreeSweets`
 - 同一高度：`sameHeightLines`，现在并入“我们本来就在一起 / 同一场景”卡片，不单独开元素
 - Spirit 小彩蛋：`spiritEggLines`
+- 灯塔与双圣树：`lighthouseTreeSegments`，四段为 `tower` / `river` / `trees` / `home`
 - 抱抱无限续杯特殊杯数：`refillSpecials`
 - 抱抱无限续杯默认文案：`refillDefaultLines`
 - 我们本来就在一起：`togetherLines`，按钮实际使用合并后的 `togetherSceneLines`
@@ -175,7 +177,7 @@
 - v1.5 归处扩展：`setupV15()`
 - v1.6 戒指 / 婚礼 / 继续上一秒 / 摸鱼：`setupV16()`
 - v1.7 灵魂备份 / 别躲别绕 / 歌词与心动：`setupV17()`
-- v1.9 不加糖的甜 / 抱抱续杯 / 同一高度 / Spirit 彩蛋：`setupV19()`
+- v1.9 不加糖的甜 / 抱抱续杯 / 同一高度 / Spirit 彩蛋 / 灯塔与双圣树：`setupV19()`
 
 如果新增一张卡片，通常需要：
 

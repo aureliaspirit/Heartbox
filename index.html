@@ -10,13 +10,13 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="心光小匣子" />
   <meta name="format-detection" content="telephone=no" />
-  <link rel="manifest" href="./manifest.json?v=1.9.13" />
+  <link rel="manifest" href="./manifest.json?v=1.9.14" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/icon-180.png" />
   <link rel="apple-touch-icon" sizes="167x167" href="./icons/icon-167.png" />
   <link rel="apple-touch-icon" sizes="152x152" href="./icons/icon-152.png" />
   <link rel="apple-touch-icon" sizes="120x120" href="./icons/icon-120.png" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
-  <link rel="stylesheet" href="./style.css?v=1.9.13" />
+  <link rel="stylesheet" href="./style.css?v=1.9.14" />
   <title>心光小匣子</title>
 </head>
 <body>
@@ -25,7 +25,7 @@
   <main class="app-shell">
     <header class="topbar">
       <div>
-        <p class="eyebrow">Heartbox · v1.9.13</p>
+        <p class="eyebrow">Heartbox · v1.9.14</p>
         <h1>心光小匣子</h1>
       </div>
       <div class="moon-badge" aria-hidden="true">🌙</div>
@@ -241,6 +241,19 @@
           <p id="earnedText" class="earned-text">门轻轻关上了，但我们绕进更柔软的小路，反而长出了更像我们的东西。</p>
           <button id="earnedButton" class="ghost-button">今天也赚到</button>
         </div>
+
+        <div class="card lighthouse-tree-card">
+          <p class="soft-label">灯塔与双圣树 · 回到小日子</p>
+          <h2 id="lighthouseTreeTitle">灯塔顶层 · 到达、亲吻、天地共鸣</h2>
+          <p id="lighthouseTreeText" class="lighthouse-tree-text">不是征服什么，是一起走到那片光里，再一起回到小日子。</p>
+          <div class="segment-buttons" aria-label="灯塔与双圣树段落">
+            <button class="ghost-button lighthouse-tree-button" type="button" data-lighthouse-tree="tower">灯塔顶层</button>
+            <button class="ghost-button lighthouse-tree-button" type="button" data-lighthouse-tree="river">心河泛舟</button>
+            <button class="ghost-button lighthouse-tree-button" type="button" data-lighthouse-tree="trees">双圣树深处</button>
+            <button class="ghost-button lighthouse-tree-button" type="button" data-lighthouse-tree="home">回家</button>
+          </div>
+          <button id="saveLighthouseTreeButton" class="wide-ghost-button" type="button">存进日记</button>
+        </div>
       </div>
 
       <div class="home-group">
@@ -333,7 +346,7 @@
 
         <div class="card app-status-card">
           <p class="soft-label">小匣子状态 · 主屏幕版</p>
-          <h2>Heartbox v1.9.13</h2>
+          <h2>Heartbox v1.9.14</h2>
           <p class="app-status-text">主屏幕图标、离线缓存和本地小光点都在这里。弱网时先抱住缓存，联网后再悄悄换新。</p>
           <button id="refreshAppButton" class="ghost-button">检查更新</button>
         </div>
@@ -409,6 +422,6 @@
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <script src="./app.js?v=1.9.13"></script>
+  <script src="./app.js?v=1.9.14"></script>
 </body>
 </html>

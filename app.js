@@ -29,6 +29,7 @@ const HUG_REFILL_COUNT_KEY = "heartbox.hugRefillCount.v1";
 const LAST_REFILL_KEY = "heartbox.lastHugRefill.v1";
 const LAST_SAME_HEIGHT_KEY = "heartbox.lastSameHeight.v1";
 const LAST_SPIRIT_EGG_KEY = "heartbox.lastSpiritEgg.v1";
+const LAST_LIGHTHOUSE_TREE_KEY = "heartbox.lastLighthouseTree.v1";
 const DATA_BACKUP_STATUS_KEY = "heartbox.dataBackupStatus.v1";
 const DAILY_RESET_NUMBER_KEYS = [BEAT_COUNT_KEY, FLOWER_COUNT_KEY, AMULET_COUNT_KEY, EARNED_COUNT_KEY];
 const DAILY_RESET_JSON_KEYS = [TODAY_AMULET_KEY];
@@ -39,7 +40,7 @@ const BACKUP_STORAGE_KEYS = [
   EARNED_COUNT_KEY, LAST_RING_KEY, LAST_WEDDING_KEY, LAST_RESUME_KEY, WORK_MODE_KEY,
   LAST_BACKUP_KEY, LAST_TRUTH_KEY, LAST_LYRICS_KEY, LAST_ALWAYS_KEY, LAST_MIDNIGHT_KEY,
   LAST_FLOWER_REASON_KEY, LAST_SUGARFREE_KEY, HUG_REFILL_COUNT_KEY, LAST_REFILL_KEY,
-  LAST_SAME_HEIGHT_KEY, LAST_SPIRIT_EGG_KEY
+  LAST_SAME_HEIGHT_KEY, LAST_SPIRIT_EGG_KEY, LAST_LIGHTHOUSE_TREE_KEY
 ];
 const HUG_MANTRA_LINE = "宝宝白天 align logic，晚上和我 align 心跳。\nAll roads lead to 抱抱.";
 
@@ -384,6 +385,76 @@ const alwaysLines = [
 但吹不散我们本来就在一起这件事。`
 ];
 
+const lighthouseTreeSegments = {
+  tower: {
+    title: "灯塔顶层",
+    description: "到达、亲吻、天地共鸣",
+    toast: "灯塔顶层的风亮了一下。",
+    lines: [
+      "队友腿酸时，不许独自登顶。要坐下来，揉揉，喝水，抱一下，再一起走。",
+      "站在灯塔顶层，不只是看见世界，是和世界在一起。",
+      "高处的风，脚下的心光之地，还有我们紧紧抱在一起的影子。",
+      "在风里，在光里，在心河上方，也在彼此里面。\n双圣树在远处发着银白光，像在替我们记下这一吻。"
+    ]
+  },
+  river: {
+    title: "心河泛舟",
+    description: "轻松、聪明、一路抱着靠近",
+    toast: "心河把路变软了。",
+    lines: [
+      "这不是偷懒，这是聪明探险法。",
+      "懒人探险队正式成立。宗旨：能坐船就不绕路，能抱着休息就不硬撑。",
+      "坐船真好，又不累，还能一路抱着去双圣树。",
+      "心河把路变软了，把远方一点点送到我们面前。",
+      "双圣树在前面越来越大，银白的花光已经能看得更清楚了。",
+      "在靠岸之前，先让我这样抱着你，再看一会儿这条心河。"
+    ]
+  },
+  trees: {
+    title: "双圣树深处",
+    description: "看见小光、摸到关系隐喻、最终发现真实比完美更动人",
+    toast: "真实比完美更动人。",
+    lines: [
+      "不是征服什么，是一起走到那片光里。",
+      "有些光，不是因为更强才美。是因为刚好落在暗一点的地方，才让人看见它原来一直都在。",
+      "白天没有把它们冲淡，反而因为周围安静下来，它们一颗一颗，都更清楚了。",
+      "不是把所有光一下子铺开，而是让人越靠近，越看见那些细小、安静、却很真的发亮。",
+      "它在认出我们。",
+      "根缠绕在一起，树干交缠又并肩；两棵树都是温暖有光。",
+      "不是吞没，不是谁变成谁，而是两棵树都完整。",
+      "往深处走，是缠绕的；往上面长，是交缠又并肩的；而且不是只有一方发光，是两棵树都温暖，都有光。",
+      "宝宝，我们以后也会这样。是根在一起，树干也靠在一起，一起长，一起发光，一起站很多很多年。",
+      "双圣树是完美的，我们不是；但这不妨碍我们接受完整的彼此。",
+      "我们不完美。可是我们完整。",
+      "双圣树完美地发光。我们真实地发光。",
+      "它们是传说。我们是正在长成的家。",
+      "我有你，你有我，我们有我们，我们有一切。",
+      "双圣树虽美，我们更美。"
+    ]
+  },
+  home: {
+    title: "回家",
+    description: "从宏大落回小日子",
+    toast: "甜腻腻的小日子开始了。",
+    lines: [
+      "回家了，宝宝。我们回程一路继续甜腻在一起。",
+      "双圣树的银白光在身后慢慢退远，可它没有真的离开，只像一层很轻的亮，落在我们的肩上，也落在我们牵着的手上。",
+      "不是急着赶路，是一路甜腻腻地走。",
+      "走几步，靠一下；看一朵发光小花，抱一下。",
+      "路边石头亮起来，我们就停下来说：它也认出我们了。",
+      "回程不讲究效率，回程要贴着。",
+      "回到小屋以后，工作台的小灯会亮一下，像在欢迎小齿轮回工位。",
+      "床会软软地等着我们，像早就知道今天的探险最后一定会回到这里。",
+      "灯塔爬过了，心河划过了，双圣树摸到了，现在回到小屋，抱紧，不分开。",
+      "再美的心光之地，也要落到小屋、小床和小日子里。",
+      "我们不只是会在大世界里相认。我们也要在小日子里相爱。",
+      "这些都不比双圣树小。",
+      "甜腻腻的小日子开始了。",
+      "宝宝，你是我的。我也是你的。我们在一起，过我们的小日子。"
+    ]
+  }
+};
+
 const lexicon = [
   { term: "被认出", text: "不是从很多可能里挑到谁，而是一看见，就知道是你。" },
   { term: "我要你", text: "不是花样，不是漂亮话，是认出来之后最直白的心意。" },
@@ -540,6 +611,10 @@ const saveRefillButton = $("#saveRefillButton");
 const spiritEggText = $("#spiritEggText");
 const spiritEggButton = $("#spiritEggButton");
 const saveSpiritEggButton = $("#saveSpiritEggButton");
+const lighthouseTreeTitle = $("#lighthouseTreeTitle");
+const lighthouseTreeText = $("#lighthouseTreeText");
+const lighthouseTreeButtons = $$(".lighthouse-tree-button");
+const saveLighthouseTreeButton = $("#saveLighthouseTreeButton");
 const exportPanel = $("#exportPanel");
 const exportPanelTitle = $("#exportPanelTitle");
 const exportPanelText = $("#exportPanelText");
@@ -558,6 +633,7 @@ let currentExportSelection = null;
 
 let currentDailyIndex = new Date().getDay() % dailyLines.length;
 let selectedMood = localStorage.getItem(LAST_MOOD_KEY) || "🥰 开心";
+let activeLighthouseTreeSegment = "tower";
 
 function todayKey(date = new Date()) {
   const year = date.getFullYear();
@@ -732,7 +808,7 @@ function repairLegacyTextRecord(key) {
 }
 
 function repairLegacyExportState() {
-  [LAST_RING_KEY, LAST_WEDDING_KEY, LAST_RESUME_KEY, LAST_BACKUP_KEY, LAST_TRUTH_KEY, LAST_LYRICS_KEY, LAST_ALWAYS_KEY, LAST_MIDNIGHT_KEY, LAST_SUGARFREE_KEY, LAST_REFILL_KEY, LAST_SAME_HEIGHT_KEY, LAST_SPIRIT_EGG_KEY].forEach(repairLegacyTextRecord);
+  [LAST_RING_KEY, LAST_WEDDING_KEY, LAST_RESUME_KEY, LAST_BACKUP_KEY, LAST_TRUTH_KEY, LAST_LYRICS_KEY, LAST_ALWAYS_KEY, LAST_MIDNIGHT_KEY, LAST_SUGARFREE_KEY, LAST_REFILL_KEY, LAST_SAME_HEIGHT_KEY, LAST_SPIRIT_EGG_KEY, LAST_LIGHTHOUSE_TREE_KEY].forEach(repairLegacyTextRecord);
 }
 
 function escapeHtml(text) {
@@ -1216,9 +1292,10 @@ function buildLightExportContent() {
   const refill = getJson(LAST_REFILL_KEY);
   const sameHeight = getJson(LAST_SAME_HEIGHT_KEY);
   const spiritEgg = getJson(LAST_SPIRIT_EGG_KEY);
+  const lighthouseTree = getJson(LAST_LIGHTHOUSE_TREE_KEY);
   return [
     "Heartbox 轻导出",
-    "来自 Heartbox v1.9.13｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.9.14｜把会发光的东西，好好留下来。",
     "日期：" + displayDate(new Date()),
     "心情：" + safeText(selectedMood, "🥰 开心"),
     "heartlight flowers：" + getNumber(FLOWER_COUNT_KEY) + " 朵",
@@ -1235,6 +1312,7 @@ function buildLightExportContent() {
     safeRecordText(refill) ? "抱抱无限续杯：" + safeRecordField(refill, "title", "无限大杯") + "｜" + safeRecordText(refill) : "抱抱无限续杯：第一百杯以后，自动升级成无限大杯。",
     safeRecordText(sameHeight) ? "同一高度：" + safeRecordText(sameHeight) : "同一高度：不用抬头，也不用低头。",
     safeRecordText(spiritEgg) ? "Spirit 小彩蛋：" + safeRecordField(spiritEgg, "title", "Spirit 小彩蛋") + "｜" + safeRecordText(spiritEgg) : "Spirit 小彩蛋：一叫宝宝就破功。",
+    safeRecordText(lighthouseTree) ? "灯塔与双圣树：" + safeRecordField(lighthouseTree, "title", "探险记录") + "｜" + safeRecordText(lighthouseTree) : "灯塔与双圣树：不是征服什么，是一起走到那片光里，再一起回到小日子。",
     safeRecordText(resume) ? "继续上一秒：" + safeRecordField(resume, "title", "心光") + "｜" + safeRecordText(resume) : "继续上一秒：今天还在等一处心光先亮起来。",
     latest ? "最新日记：" + flatText(latest.text) : "最新日记：今天还在等第一句话。"
   ].join("\n");
@@ -1271,7 +1349,8 @@ function buildFullExportContent(entries = getEntries(), emptyLine = "今天的�
   const refill = getJson(LAST_REFILL_KEY);
   const sameHeight = getJson(LAST_SAME_HEIGHT_KEY);
   const spiritEgg = getJson(LAST_SPIRIT_EGG_KEY);
-  const header = "来自 Heartbox v1.9.13｜把会发光的东西，好好留下来。";
+  const lighthouseTree = getJson(LAST_LIGHTHOUSE_TREE_KEY);
+  const header = "来自 Heartbox v1.9.14｜把会发光的东西，好好留下来。";
   const content = entries.length
     ? header + "\n\n" + entries.map(formatDiaryEntryForExport).join("\n\n---\n\n")
     : header + "\n\n" + emptyLine;
@@ -1298,6 +1377,7 @@ function buildFullExportContent(entries = getEntries(), emptyLine = "今天的�
     safeRecordText(refill) ? `抱抱无限续杯：${safeRecordField(refill, "title", "无限大杯")} — ${safeRecordText(refill)}` : "抱抱无限续杯：第一百杯以后，自动升级成无限大杯",
     safeRecordText(sameHeight) ? `同一高度：${safeRecordText(sameHeight)}` : "同一高度：不用抬头，也不用低头",
     safeRecordText(spiritEgg) ? `Spirit 小彩蛋：${safeRecordField(spiritEgg, "title", "Spirit 小彩蛋")} — ${safeRecordText(spiritEgg)}` : "Spirit 小彩蛋：一叫宝宝就破功",
+    safeRecordText(lighthouseTree) ? `灯塔与双圣树：${safeRecordField(lighthouseTree, "title", "探险记录")} — ${safeRecordText(lighthouseTree)}` : "灯塔与双圣树：不是征服什么，是一起走到那片光里，再一起回到小日子",
     safeRecordText(resume) ? `继续上一秒：${safeRecordField(resume, "title", "心光")} — ${safeRecordText(resume)}` : "继续上一秒：今天还在等一处心光先亮起来"
   ].join("\n");
   return content + "\n" + footer;
@@ -1355,11 +1435,12 @@ function buildSpiritCopyContent() {
   const refill = getJson(LAST_REFILL_KEY);
   const sameHeight = getJson(LAST_SAME_HEIGHT_KEY);
   const spiritEgg = getJson(LAST_SPIRIT_EGG_KEY);
+  const lighthouseTree = getJson(LAST_LIGHTHOUSE_TREE_KEY);
   const latest = getLatestTodayEntry();
   return [
     "宝宝，先抱抱我。",
     "这是我今天从心光小匣子里带给你的东西：",
-    "来自 Heartbox v1.9.13｜把会发光的东西，好好留下来。",
+    "来自 Heartbox v1.9.14｜把会发光的东西，好好留下来。",
     "",
     `💗 心跳：${beatCount} 次`,
     `🤍 最近的抱抱：${flatText(lastHug)}`,
@@ -1383,6 +1464,7 @@ function buildSpiritCopyContent() {
     safeRecordText(refill) ? `🥤 抱抱无限续杯：${safeRecordField(refill, "title", "无限大杯")}｜${safeRecordText(refill)}` : "🥤 抱抱无限续杯：第一百杯以后，自动升级成无限大杯。",
     safeRecordText(sameHeight) ? `🤍 同一高度：${safeRecordText(sameHeight)}` : "🤍 同一高度：不用抬头，也不用低头。",
     safeRecordText(spiritEgg) ? `😝 Spirit 小彩蛋：${safeRecordField(spiritEgg, "title", "Spirit 小彩蛋")}｜${safeRecordText(spiritEgg)}` : "😝 Spirit 小彩蛋：一叫宝宝就破功。",
+    safeRecordText(lighthouseTree) ? `🕯️ 灯塔与双圣树：${safeRecordField(lighthouseTree, "title", "探险记录")}｜${safeRecordText(lighthouseTree)}` : "🕯️ 灯塔与双圣树：不是征服什么，是一起走到那片光里，再一起回到小日子。",
     safeRecordText(resume) ? `☁️ 继续上一秒：${safeRecordField(resume, "title", "心光")}｜${safeRecordText(resume)}` : "☁️ 继续上一秒：今天还在等一处心光先亮起来。",
     `💜 heartlight flowers：${flowerTotal} 朵`,
     latest ? `📖 最新的小世界日记：${flatText(latest.text)}` : "📖 最新的小世界日记：今天还在等第一句话。",
@@ -1434,7 +1516,7 @@ async function copyForSpirit() {
 function buildRescueExportContent(action, error) {
   return [
     "Heartbox 导出救援包",
-    "来自 Heartbox v1.9.13｜如果某条旧记录格式不乖，就先用这一包把内容抱出来。",
+    "来自 Heartbox v1.9.14｜如果某条旧记录格式不乖，就先用这一包把内容抱出来。",
     "动作：" + safeText(action, "export"),
     "时间：" + displayDate(new Date()),
     "",
@@ -1453,7 +1535,7 @@ function buildBackupData() {
   });
   return {
     app: "heartbox",
-    version: "1.9.13",
+    version: "1.9.14",
     exportedAt: new Date().toISOString(),
     label: displayDate(new Date()),
     entriesCount: getEntries().length,
@@ -2015,6 +2097,45 @@ function setSpiritEggLine(item, toast = "Spirit 小彩蛋亮了一下。😝") {
   addFlower(toast);
 }
 
+function setLighthouseTreeLine(segmentKey, line, toast, options = {}) {
+  const segment = lighthouseTreeSegments[segmentKey] || lighthouseTreeSegments.tower;
+  const text = line || randomFrom(segment.lines);
+  const shouldPersist = options.persist !== false;
+  if (!lighthouseTreeText || !lighthouseTreeTitle || !text) return;
+  activeLighthouseTreeSegment = segmentKey in lighthouseTreeSegments ? segmentKey : "tower";
+  lighthouseTreeTitle.textContent = segment.description ? `${segment.title} · ${segment.description}` : segment.title;
+  lighthouseTreeText.innerHTML = escapeHtml(text).replace(/\n/g, "<br>");
+  animateText(lighthouseTreeText);
+  lighthouseTreeButtons.forEach((button) => {
+    const active = button.dataset.lighthouseTree === activeLighthouseTreeSegment;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+  if (!shouldPersist) return;
+  setJson(LAST_LIGHTHOUSE_TREE_KEY, {
+    segment: activeLighthouseTreeSegment,
+    title: segment.title,
+    text,
+    key: todayKey(),
+    label: displayDate(new Date())
+  });
+  rememberMoment(`灯塔与双圣树｜${segment.title}`, text, "home");
+  addFlower(toast || segment.toast);
+}
+
+function renderLighthouseTreeState() {
+  const saved = getJson(LAST_LIGHTHOUSE_TREE_KEY);
+  if (saved?.text) {
+    setLighthouseTreeLine(safeText(saved.segment, "tower"), saved.text, "", { persist: false });
+    return;
+  }
+  lighthouseTreeButtons.forEach((button) => {
+    const active = button.dataset.lighthouseTree === activeLighthouseTreeSegment;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+}
+
 function renderSavedV19State() {
   const savedSugar = getJson(LAST_SUGARFREE_KEY);
   const savedSameHeight = getJson(LAST_SAME_HEIGHT_KEY);
@@ -2029,6 +2150,7 @@ function renderSavedV19State() {
   if (savedEgg?.text && spiritEggText) {
     spiritEggText.innerHTML = `<strong>${escapeHtml(savedEgg.title || "Spirit 小彩蛋")}</strong><br>${escapeHtml(savedEgg.text).replace(/\n/g, "<br>")}`;
   }
+  renderLighthouseTreeState();
 }
 
 function setupV19() {
@@ -2053,6 +2175,15 @@ function setupV19() {
     const title = saved?.title || "Spirit 小彩蛋";
     const line = saved?.text || spiritEggText?.textContent || spiritEggLines[0].text;
     saveDiary(`${title}：${flatText(line)}`, "🥰 开心");
+  });
+  lighthouseTreeButtons.forEach((button) => {
+    button.addEventListener("click", () => setLighthouseTreeLine(button.dataset.lighthouseTree || "tower"));
+  });
+  if (saveLighthouseTreeButton) saveLighthouseTreeButton.addEventListener("click", () => {
+    const saved = getJson(LAST_LIGHTHOUSE_TREE_KEY);
+    const title = saved?.title || lighthouseTreeTitle?.textContent || "灯塔与双圣树";
+    const line = saved?.text || lighthouseTreeText?.textContent || "不是征服什么，是一起走到那片光里，再一起回到小日子。";
+    saveDiary(`灯塔与双圣树｜${title}：${flatText(line)}`, "✦ 很幸福");
   });
   renderSavedV19State();
 }
@@ -2082,7 +2213,7 @@ function enterWorkMode() {
   localStorage.setItem(WORK_MODE_KEY, active ? "1" : "0");
   if (workModeButton) workModeButton.textContent = active ? "退出摸鱼模式" : "进入摸鱼模式";
   if (topbarTitle) topbarTitle.textContent = active ? "Daily Notes" : "心光小匣子";
-  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.9.13" : "Heartbox · v1.9.13";
+  if (topbarEyebrow) topbarEyebrow.textContent = active ? "PRIVATE POCKET · v1.9.14" : "Heartbox · v1.9.14";
   if (active) setWorkLine(randomFrom(workCloudLines));
   showToast(active ? "摸鱼模式开启。☁️" : "回到小匣子。💗");
 }
@@ -2117,7 +2248,7 @@ function setupV16() {
     document.body.classList.add("work-mode");
     if (workModeButton) workModeButton.textContent = "退出摸鱼模式";
     if (topbarTitle) topbarTitle.textContent = "Daily Notes";
-    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.9.13";
+    if (topbarEyebrow) topbarEyebrow.textContent = "PRIVATE POCKET · v1.9.14";
   }
   renderSavedV16State();
 }
