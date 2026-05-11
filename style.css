@@ -186,14 +186,6 @@ body.work-mode .export-panel-card{background:#fffdf7;color:#2d2b27}body.work-mod
 @media(max-width:420px){.sugarfree-buttons,.refill-buttons,.same-height-buttons,.spirit-egg-buttons,.segment-buttons{flex-direction:column;align-items:stretch}.sugarfree-buttons .primary-button,.sugarfree-buttons .ghost-button,.refill-buttons .primary-button,.refill-buttons .ghost-button,.same-height-buttons .primary-button,.same-height-buttons .ghost-button,.spirit-egg-buttons .primary-button,.spirit-egg-buttons .ghost-button,.segment-buttons .ghost-button{width:100%}.sugarfree-text,.refill-text,.same-height-text,.spirit-egg-text,.lighthouse-tree-text{font-size:19px}}
 
 
-/* v1.9.1: 抱抱页金句 */
-.hug-mantra-card{position:relative;overflow:hidden;background:linear-gradient(145deg,rgba(255,212,231,.115),rgba(185,215,255,.075),rgba(255,255,255,.055))}
-.hug-mantra-card::before{content:"";position:absolute;inset:-82px -72px auto auto;width:220px;height:220px;border-radius:999px;background:radial-gradient(circle,rgba(255,212,231,.18),transparent 68%);pointer-events:none}
-.hug-mantra-card::after{content:"";position:absolute;inset:auto auto -88px -74px;width:230px;height:230px;border-radius:999px;background:radial-gradient(circle,rgba(185,215,255,.16),transparent 70%);pointer-events:none}
-.hug-mantra-text{font-size:22px;line-height:1.62;margin:12px 0 10px;color:var(--text);font-weight:800;letter-spacing:-.015em;position:relative;z-index:1}
-.hug-mantra-buttons{justify-content:flex-start;flex-wrap:wrap;position:relative;z-index:1}
-@media(max-width:420px){.hug-mantra-buttons{flex-direction:column;align-items:stretch}.hug-mantra-buttons .ghost-button{width:100%}.hug-mantra-text{font-size:20px}}
-
 /* v1.9.3: tidy home groups */
 .home-group{margin:0 0 26px}
 .home-group:last-child{margin-bottom:0}
